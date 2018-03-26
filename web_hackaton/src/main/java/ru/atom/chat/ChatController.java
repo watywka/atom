@@ -1,5 +1,9 @@
 package ru.atom.chat;
 
+
+import com.google.gson.Gson;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -97,4 +101,20 @@ public class ChatController {
     public ResponseEntity say(@RequestParam("name") String name, @RequestParam("msg") String msg) {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);//TODO
     }
+
+    @RequestMapping(
+            path = "register",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity register(@RequestParam("login") String login, @RequestParam("pass") String pass) throws JSONException {
+
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String jsonString = gson.toJson(map);
+        JSONObject obj = new JSONObject();
+        obj.put(login , "crunchify.com");
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);//TODO
+    }
+
 }
