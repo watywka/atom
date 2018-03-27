@@ -6,9 +6,10 @@
 <div id="header">
     <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="login()">
         <input id="name" name="name" value="" style="font-size:medium" type="text">
+		<input id="name" name="name" value="" style="font-size:medium" type="text">
         <input value="Login" style="font-size:large" type="submit">
     </form>
-	<form method="POST" id="loginform" action="javascript:void(null);" onsubmit="login()">
+	<form method="POST" id="loginform" action="javascript:void(null);" onsubmit="register()">
         <input id="login" name="login" placeholder="Login" class="msginput" value="" style="font-size:medium" type="text">
 		<input id="passwd" name="passwd" placeholder="Password" class="msginput" value="" style="font-size:medium" type="text">
         <input value="Register" class="sendbutton" style="font-size:large" type="submit">
@@ -87,14 +88,16 @@
         });
     }
 
-    function login() {
-        var name = $('#nameform').serialize();
+    function register() {
+        var name = $('#loginform').serialize();
+		
 
         var settings = {
             "method": "POST",
             "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/login",
-            "data": name
+            "url": "http://" + host + ":" + port + "/chat/register",
+            "login": name,
+			"password": 
         };
 
         $.ajax(settings).done(function (response) {

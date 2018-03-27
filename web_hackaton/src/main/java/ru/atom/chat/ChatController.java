@@ -1,9 +1,9 @@
 package ru.atom.chat;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.google.gson.Gson;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -37,7 +36,10 @@ public class ChatController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> login(@RequestParam("name") String name) {
+    public ResponseEntity<String> login(@RequestParam("name") String name, @RequestParam("pass") String pass) throws IOException {
+
+        boolean flag= false;
+
         if (name.length() < 1) {
             return ResponseEntity.badRequest().body("Too short name, sorry :(");
         }
@@ -47,9 +49,28 @@ public class ChatController {
         if (usersOnline.containsKey(name)) {
             return ResponseEntity.badRequest().body("Already logged in:(");
         }
-        usersOnline.put(name, name);
-        messages.add("[" + name + "] logged in");
-        return ResponseEntity.ok().build();
+
+        HashMap<String,String> login_password;
+        FileInputStream fis;
+        fis = new FileInputStream("login_password.ser");
+
+        try(ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            login_password = (HashMap<String, String>) ois.readObject();
+
+            if (pass == login_password.get(name)) flag = true;
+
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(flag) {
+            usersOnline.put(name, name);
+            messages.add("[" + name + "] logged in");
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().body("wrong login or password");
     }
 
     /**
@@ -73,7 +94,7 @@ public class ChatController {
             path = "online",
             method = RequestMethod.GET,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity online() {
+    public ResponseEntity<Object> online() {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);//TODO
     }
 
@@ -107,12 +128,30 @@ public class ChatController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity register(@RequestParam("login") String login, @RequestParam("pass") String pass) throws JSONException {
+    public ResponseEntity register(@RequestParam("login") String login, @RequestParam("pass") String pass) throws IOException {
+        HashMap<String, String> login_password = null;
+        FileInputStream fis;
+        fis = new FileInputStream("login_password.ser");
+        try(ObjectInputStream ois = new ObjectInputStream(fis)) {
 
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        String jsonString = gson.toJson(map);
-        JSONObject obj = new JSONObject();
-        obj.put(login , "crunchify.com");
+            login_password = (HashMap<String, String>) ois.readObject();
+
+            login_password.put(login,pass);
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        FileOutputStream fos = new FileOutputStream("login_password.ser");
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(login_password);
+
+        }
+
+
+
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);//TODO
     }
