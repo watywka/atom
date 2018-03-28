@@ -5,19 +5,25 @@
 <body>
 <div id="header">
     <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="login()">
-        <input id="name" name="name" value="" style="font-size:medium" type="text">
-		<input id="name" name="name" value="" style="font-size:medium" type="text">
-        <input value="Login" style="font-size:large" type="submit">
+        <label class="mr-sm-2" for="name">Name: </label>
+        <input id="name"class="form-control" name="name" value="" style="font-size:medium" type="text">
+        <input class="btn btn-primary" value="Login" style="font-size:large" type="submit">
     </form>
-	<form method="POST" id="loginform" action="javascript:void(null);" onsubmit="register()">
+	<form method="POST" id="registerform" action="javascript:void(null);" onsubmit="register()">
         <input id="login" name="login" placeholder="Login" class="msginput" value="" style="font-size:medium" type="text">
 		<input id="passwd" name="passwd" placeholder="Password" class="msginput" value="" style="font-size:medium" type="text">
         <input value="Register" class="sendbutton" style="font-size:large" type="submit">
     </form>
 </div>
+    
+<div id= "test">
+    <p id = "testp">Some text</p>
+</div>
+    
 <div id="body">
     <div id="history" class="chat form"></div>
 </div>
+
 <div id="footer">
     <form method="POST" id="msgform" action="javascript:void(null);" onsubmit="say()">
         <input id="msg" name="msg" class="msginput" value="" style="font-size:medium" type="text">
@@ -68,20 +74,17 @@
             console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
         });
     }
-	function login() {
-        var login = $('#msgform').serialize();
-        var pass = $('#nameform').serialize();
-
+    function login() {
+        var name = $('#nameform').serialize();
         var settings = {
             "method": "POST",
             "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/say",
-            "data": name + "&" + msg
+            "url": "http://" + host + ":" + port + "/chat/login",
+            "data": name
         };
-
         $.ajax(settings).done(function (response) {
-            $('#msgform').trigger("reset");
             loadHistory();
+            loadUsers()
         }).fail(function (jqXHR, textStatus) {
             alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
             console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
@@ -89,8 +92,10 @@
     }
 
     function register() {
-        var name = $('#loginform').serialize();
-		
+        var name = $('#registerform').serialize();
+	    var h =  document.getElementById("registerform");
+        document.body.innerHTML = "bla";
+        host.print();
 
         var settings = {
             "method": "POST",

@@ -58,7 +58,7 @@ public class ChatController {
 
             login_password = (HashMap<String, String>) ois.readObject();
 
-            if (pass == login_password.get(name)) flag = true;
+            if (login_password.get(name).equals(pass)) flag = true;
 
 
 
