@@ -1,14 +1,18 @@
+<!DOCTYPE html>
+<html>
 <head>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<html>
+
 <body>
 <div id="header">
+
     <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="login()">
-        <label class="mr-sm-2" for="name">Name: </label>
-        <input id="name"class="form-control" name="name" value="" style="font-size:medium" type="text">
-        <input class="btn btn-primary" value="Login" style="font-size:large" type="submit">
+        <input id="name" class="msginput" placeholder="Login for log in" name="name" value="" style="font-size:medium" type="text">
+        <input id="pass" class="msginput" placeholder="log pass" name="pass"   value="" style="font-size:medium" type="text">
+        <input class="sendbutton" value="login" style="font-size:large" type="submit">
     </form>
+
 	<form method="POST" id="registerform" action="javascript:void(null);" onsubmit="register()">
         <input id="login" name="login" placeholder="Login" class="msginput" value="" style="font-size:medium" type="text">
 		<input id="passwd" name="passwd" placeholder="Password" class="msginput" value="" style="font-size:medium" type="text">
@@ -75,13 +79,15 @@
         });
     }
     function login() {
-        var name = $('#nameform').serialize();
+        var data = $('#nameform').serialize();
         var settings = {
             "method": "POST",
             "crossDomain": true,
             "url": "http://" + host + ":" + port + "/chat/login",
-            "data": name
+            "data": data
         };
+		console.log(settings);
+
         $.ajax(settings).done(function (response) {
             loadHistory();
             loadUsers()
@@ -92,21 +98,18 @@
     }
 
     function register() {
-        var name = $('#registerform').serialize();
-	    var h =  document.getElementById("registerform");
-        document.body.innerHTML = "bla";
-        host.print();
+		var data = $('#registerform').serialize();
 
         var settings = {
-            "method": "POST",
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/register",
-            "login": name,
-			"password": 
-        };
+                        "method": "POST",
+                        "crossDomain": true,
+                        "url": "http://" + host + ":" + port + "/chat/register",
+                        "data": data
+	    };
+        console.log(settings);
 
         $.ajax(settings).done(function (response) {
-            loadHistory();
+            alert( "success" );
         }).fail(function (jqXHR, textStatus) {
             alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
             console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);

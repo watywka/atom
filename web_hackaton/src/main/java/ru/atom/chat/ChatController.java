@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -38,7 +39,7 @@ public class ChatController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> login(@RequestParam("name") String name, @RequestParam("pass") String pass) throws IOException {
 
-        boolean flag= false;
+        boolean flag= false;// flag for check if user is in base
 
         if (name.length() < 1) {
             return ResponseEntity.badRequest().body("Too short name, sorry :(");
@@ -49,6 +50,7 @@ public class ChatController {
         if (usersOnline.containsKey(name)) {
             return ResponseEntity.badRequest().body("Already logged in:(");
         }
+        //NEED TO CHECK IF NAME EXIST IN BASE 
 
         HashMap<String,String> login_password;
         FileInputStream fis;
@@ -128,15 +130,21 @@ public class ChatController {
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity register(@RequestParam("login") String login, @RequestParam("pass") String pass) throws IOException {
+    public ResponseEntity register(@RequestParam("login") String login, @RequestParam("passwd") String pass) throws IOException {
         HashMap<String, String> login_password = null;
         FileInputStream fis;
+        boolean isNameNotIn = true;
         fis = new FileInputStream("login_password.ser");
         try(ObjectInputStream ois = new ObjectInputStream(fis)) {
 
             login_password = (HashMap<String, String>) ois.readObject();
 
-            login_password.put(login,pass);
+            if (login_password.get(login) == null) {
+                login_password.put(login, pass);
+
+            }else{
+                isNameNotIn = false;
+            }
 
 
         } catch (ClassNotFoundException e) {
@@ -149,11 +157,12 @@ public class ChatController {
             oos.writeObject(login_password);
 
         }
+        if (isNameNotIn) {
+            return ResponseEntity.ok().build();//TODO
+        }else{
+            return ResponseEntity.badRequest().body("try again with new name");
+        }
 
-
-
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);//TODO
     }
 
 }
