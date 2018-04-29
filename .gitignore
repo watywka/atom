@@ -1,6 +1,7 @@
 /*
 /*/
 !/game/
+!/game_service/
 
 .gradle/
 /gradle/
