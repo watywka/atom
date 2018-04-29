@@ -65,7 +65,7 @@ public class Matchmaker implements Runnable{
     private void getNextGameId() {
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new FormBody.Builder().add("count", String.valueOf(PLAYERS_PER_GAME)).build();
-        Request request = new Request.Builder().url("http://localhost:8090/game/create").post(requestBody).build();
+        Request request = new Request.Builder().url("http://localhost:8090/game/create").post(requestBody).addHeader("Content-Type", "application/x-www-form-urlencoded").build();
         Response response;
         try {
             response = client.newCall(request).execute();

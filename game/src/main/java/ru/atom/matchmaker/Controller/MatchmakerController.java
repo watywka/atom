@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.atom.matchmaker.Connection;
 import ru.atom.matchmaker.Matchmaker;
 
@@ -14,7 +17,7 @@ import ru.atom.matchmaker.Matchmaker;
 @RequestMapping("matchmaker")
 public class MatchmakerController {
 
-    public static final Logger logger = LoggerFactory.getLogger(MatchmakerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MatchmakerController.class);
     private Matchmaker matchmaker;
 
     @Autowired
@@ -23,7 +26,7 @@ public class MatchmakerController {
     }
 
     @RequestMapping(path = "join",
-            method = RequestMethod.GET)
+            method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Long> join(@RequestParam("name") String name) {
         logger.info("New connection: name = {}", name);
