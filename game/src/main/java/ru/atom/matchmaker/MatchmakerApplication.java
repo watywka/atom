@@ -1,12 +1,12 @@
-package ru.atom.game;
+package ru.atom.matchmaker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GameApplication {
+public class MatchmakerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GameApplication.class, args);
+		SpringApplication.run(MatchmakerApplication.class, args);
 	}
 }

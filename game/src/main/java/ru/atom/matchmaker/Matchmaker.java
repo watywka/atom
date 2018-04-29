@@ -1,22 +1,23 @@
-package ru.atom.game;
+package ru.atom.matchmaker;
 
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class Matchmaker implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(Matchmaker.class);
     private static final int PLAYERS_PER_GAME = 4;
-    private int currentGameId = 1;
+    private long currentGameId = 1;
 
     private BlockingQueue<Connection> queue;
 
@@ -29,18 +30,20 @@ public class Matchmaker implements Runnable{
         queue = new LinkedBlockingQueue<>(PLAYERS_PER_GAME);
     }
 
+
     @PostConstruct
     private void startMatchmaker() {
-        new Thread(this).start();;
+        new Thread(this).start();
     }
 
     @Override
     public void run() {
         logger.info("Matchmaker started");
+        getNextGameId();
         List<Connection> players = new ArrayList<>(PLAYERS_PER_GAME);
         while (!Thread.currentThread().isInterrupted()) {
             if (players.size() == PLAYERS_PER_GAME) {
-                currentGameId++;
+                getNextGameId();
                 players.clear();
             }
             else {
@@ -57,5 +60,21 @@ public class Matchmaker implements Runnable{
                 }
             }
         }
+    }
+
+    private void getNextGameId() {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder().add("count", String.valueOf(PLAYERS_PER_GAME)).build();
+        Request request = new Request.Builder().url("http://localhost:8090/game/create").post(requestBody).build();
+        Response response;
+        try {
+            response = client.newCall(request).execute();
+            currentGameId =  Long.parseLong(response.body().string());
+        } catch (IOException e) {
+            logger.error("Can't create new game");
+            logger.error(e.getLocalizedMessage());
+            Thread.currentThread().interrupt();
+        }
+
     }
 }

@@ -1,10 +1,10 @@
-package ru.atom.game;
+package ru.atom.matchmaker;
 
 public class Connection {
 
     private String name;
 
-    private int gameId;
+    private long gameId;
 
     public Connection(String name) {
         this.name = name;
@@ -14,11 +14,11 @@ public class Connection {
         return name;
     }
 
-    public int getGameId() {
+    public long getGameId() {
         return gameId;
     }
 
-    public Connection setGameId(int gameId) {
+    public Connection setGameId(long gameId) {
         this.gameId = gameId;
         return this;
     }
