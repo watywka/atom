@@ -45,6 +45,7 @@ public class Matchmaker implements Runnable{
         List<Connection> players = new ArrayList<>(PLAYERS_PER_GAME);
         while (!Thread.currentThread().isInterrupted()) {
             if (players.size() == PLAYERS_PER_GAME) {
+                //TODO: "start" post request
                 getNextGameId();
                 players.clear();
 

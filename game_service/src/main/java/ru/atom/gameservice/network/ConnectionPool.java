@@ -27,6 +27,7 @@ public class ConnectionPool {
         return connections.get(session);
     }
 
+    //требуются уникальные имена игроков
     public WebSocketSession getSession(String player) {
         return connections.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(player))
