@@ -6,6 +6,18 @@ public class Connection {
 
     private long gameId;
 
+    private boolean available = true;
+
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     public Connection(String name) {
         this.name = name;
     }

@@ -40,18 +40,28 @@ public class Matchmaker implements Runnable{
     public void run() {
         logger.info("Matchmaker started");
         getNextGameId();
+
+
         List<Connection> players = new ArrayList<>(PLAYERS_PER_GAME);
         while (!Thread.currentThread().isInterrupted()) {
             if (players.size() == PLAYERS_PER_GAME) {
                 getNextGameId();
                 players.clear();
+
             }
             else {
-                try {
+               try {
                     Connection e = queue.poll(10_000, TimeUnit.SECONDS);
                     synchronized (e) {
-                        e.setGameId(currentGameId);
-                        logger.info("Player {} -> game {}",e.getName(), e.getGameId());
+                        if( currentGameId > 0){
+                            e.setGameId(currentGameId);
+                            logger.info("Player {} -> game {}", e.getName(), e.getGameId());
+
+
+                        }else {
+                            e.setAvailable(false);
+                            logger.info("Game id < 0");
+                        }
                         players.add(e);
                         e.notify();
                     }
@@ -70,10 +80,12 @@ public class Matchmaker implements Runnable{
         try {
             response = client.newCall(request).execute();
             currentGameId =  Long.parseLong(response.body().string());
+            
         } catch (IOException e) {
             logger.error("Can't create new game");
             logger.error(e.getLocalizedMessage());
-            Thread.currentThread().interrupt();
+            currentGameId = -1;
+            //Thread.currentThread().interrupt();
         }
 
     }

@@ -40,8 +40,11 @@ public class MatchmakerController {
                 return ResponseEntity.badRequest().body((long) 0);
             }
         }
+        if ( playerConnection.isAvailable()){
+            return ResponseEntity.ok(playerConnection.getGameId());
+        }
 
-        return ResponseEntity.ok(playerConnection.getGameId());
+        return ResponseEntity.badRequest().body((long) 0);
     }
 
 }
