@@ -12,4 +12,13 @@ public class Wall extends GameObject{
         super(x, y, field);
     }
 
+    @Override
+    public boolean isAlive() {
+        return true;
+    }
+
+    @Override
+    public void setAlive(boolean alive) {
+        return;
+    }
 }

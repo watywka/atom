@@ -5,70 +5,98 @@ import ru.atom.gameservice.message.Message;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player extends GameObject implements Tickable{
+public class Player extends GameObject implements Tickable {
 
     private final String name;
     private int velX;
     private int velY;
+    private int pixelX;
+    private int pixelY;
     protected int radius = 1;
 
 
-    public Player(int x, int y, Field field, String name) {
+    public Player(int x, int y, Field field, String name, int pixX, int pixY) {
         super(x, y, field);
         this.name = name;
+        pixelX = x;
+        pixelY = y;
     }
 
 
-    public void setVels(int x, int y){
+    public void setVels(int x, int y) {
         velX = x;
         velY = y;
     }
 
+
     @Override
     public void tick(long elapsed) {
         //some collision check
-        List<GameObject> colliding = new ArrayList<>();
+        GameObject collideObj = null;
 
         //Очень плохой способ поиска сталкивающихся объектов
         // по Х
-        if(velX > 0){
-            for (int i = x;i< x+velX; i++){
-                GameObject fieldAt = field.getAt(i, y);
-                if (fieldAt instanceof Box || fieldAt instanceof Bomb || fieldAt instanceof Wall)
-                    //FUCK THIS IS REALLY STUPID
+        int xTileVel =0;
+        int yTileVel = 0;
+        if (velX > 0) {
+            int newX = (pixelX + velX) / field.tile;
+            if (newX != x){
+                collideObj = field.getAt(newX, y);
+                xTileVel++;
             }
-        }else{
-            for (int i = x;i> x+velX; i--){
-                GameObject fieldAt = field.getAt(i, y);
 
+        }
+        if (velX < 0) {
+            int newX = (pixelX + velX) / field.tile;
+            if (newX != x){
+                collideObj = field.getAt(newX, y);
+                xTileVel--;
             }
         }
         // по Y
-        if(velY > 0){
-            for (int i = y;i< y+velY; i++){
-
+        if (velY > 0) {
+            int newY = (pixelY + velY) / field.tile;
+            if (newY != x) {
+                collideObj = field.getAt(x, newY);
+                yTileVel++;
             }
-        }else{
-            for (int i = y;i> y+velY; i--){
-
+        }
+        if (velY < 0) {
+            int newY = (pixelY + velY) / field.tile;
+            if (newY != x) {
+                collideObj = field.getAt(x, newY);
+                yTileVel--;
             }
         }
 
-        if ((x+velX<field.getHeight())&&(y+velY<field.getWidth())) { // out of field
-            if ()
-            x += velX;
-            y += velY;
-        }else {
-            // else: set x, y to the border
-            if (velX>0)
-                x = field.getHeight();
-            else
-                x = 0;
+        if ( pixelX + velX < field.pixLEFTborder()
+                && pixelY + velY < field.pixBOTTOMborder()
+                && pixelX + velX < field.pixRIGHTborder()
+                && pixelY + velY < field.pixTOPborder()       )
+        {                                                 // not out of field
+            if (collideObj == null ) {
+                x += xTileVel;
+                y += yTileVel;
+                pixelX += velX;
+                pixelY += velY;
+            }
 
-            if (velY>0)
-                y = field.getWidth();
-            else
+        } else {
+            // else: set x, y to the border
+            if (velX > 0) {
+                x = field.getWidth();
+                pixelX = field.pixRIGHTborder();
+            }else {
+                x = 0;
+                pixelX = field.pixLEFTborder();
+            }
+            if (velY > 0) {
+                y = field.getHeight();
+                pixelY = field.pixBOTTOMborder();
+            }else {
                 y = 0;
+                pixelY = field.pixTOPborder();
+            }
         }
         velX = 0;
         velY = 0;

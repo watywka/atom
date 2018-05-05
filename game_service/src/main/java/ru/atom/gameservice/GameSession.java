@@ -39,26 +39,37 @@ public class GameSession implements Runnable {
 
     @Override
     public void run() {
+        field = new Field(10,10, players);
         final int FPS = 60;
         final long FRAME_TIME = 1000 / FPS;
         while (!Thread.currentThread().isInterrupted()) {
             long started = System.currentTimeMillis();
 
             List<Message> messages = readInputQueue();
-            for (Message message : messages ) {
+            for (Message message : messages) {
                 switch (message.getTopic()) {
                     case PLANT_BOMB:
                         field.plantBomb(field.getPlayerByName(message.getName()));
                         break;
                     case MOVE:
                         //получаем плеера и ставим ему velx vely
-                        Player p = field.getPlayerByName(message.getName());
-                        int vx,vy;
-                        /*
-                        TODO: Нужно посмотреть как скорости запакованы в дату
-                        vx  = message.getData().toCharArray();
-                        p.
-                        */
+                        Player p = field.getPlayerByName(message.getName());//TODO: чекнуть, приходит ли в месседже имя игрока
+                        int vX = 0, vY = 0;
+                        String direction = message.getData();
+                        if (direction.endsWith("UP\"}")){
+                            vY = -1;
+                        }
+                        if (direction.endsWith("DOWN\"}")){
+                            vY = 1;
+                        }
+                        if (direction.endsWith("RIGHT\"}")){
+                            vX= 1;
+                        }
+                        if (direction.endsWith("UP\"}")){
+                            vX = -1;
+                        }
+                        p.setVels(vX,vY);
+
                 }
             }
 
@@ -81,7 +92,7 @@ public class GameSession implements Runnable {
 
     private List<Message> readInputQueue() {
         List<Message> out = new ArrayList<>();
-        synchronized (inputQueue){  // Сделал на всякий случай , если здесь не нужна синхронизация , то удали)
+        synchronized (inputQueue) {  // Сделал на всякий случай , если здесь не нужна синхронизация , то удали)
             out.addAll(inputQueue);
             inputQueue.clear();
         }

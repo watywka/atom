@@ -1,5 +1,7 @@
 package ru.atom.gameservice.tick;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -7,25 +9,26 @@ public class Field {
 
     /*
 
-    |-----------------> Y
+    |-----------------> X
     |       width
     |
     | he
     | ig
     | ht
     |
-    V X
+    V Y
 
      */
 
-    private final int height; // X
-    private final int width;  // Y
+    private final int height; // Y
+    private final int width;  // X
+    public static final int tile = 48;   // количество пикселей
     //перенес этот сет в field из gamesession мне кажетя логичнее...
     private Set<Tickable> tickables = new ConcurrentSkipListSet<>();
 
     private GameObject[][] gameObjects;
 
-    public Field(int height, int width) {
+    public Field(int height, int width, List<String> players) {
         this.height = height;
         this.width = width;
         gameObjects = new GameObject[height][];
@@ -33,9 +36,39 @@ public class Field {
             gameObjects[i] = new GameObject[width];
 
         }
+
         //Добавлю Стены WALL
         for (int i =0;i<height; i +=2)
             for (int j = 0; j < width; j+=2) gameObjects[i][j] = new Wall(i,j,this);
+
+
+        //Добавлю Игроков
+        int[] X={0,9,0,9};
+        int[] Y={0,0,9,9};
+
+        int i=0;
+        for(String p : players){
+            Player player = new Player(X[i],Y[i],this, p, tile/2+tile*X[i],tile/2+tile*Y[i]);
+            setAt(X[i],Y[i],player);
+            i++;
+        }
+    }
+
+    public int pixRIGHTborder(){
+        return width*tile - 8;
+    }
+    public int pixLEFTborder(){
+        return 8;
+    }
+    public int pixTOPborder(){
+        return 8;
+    }
+    public int pixBOTTOMborder(){
+        return height*tile - 8;
+    }
+
+    public static int PixelsToTiles(int x){
+        return x/tile;
     }
 
     public int getHeight() {
@@ -44,6 +77,10 @@ public class Field {
 
     public int getWidth() {
         return width;
+    }
+
+    public  void setAt(int x, int y, GameObject obj){
+        gameObjects[x][y] = obj;
     }
 
     public GameObject getAt(int x, int y) {
