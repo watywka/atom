@@ -22,12 +22,7 @@ public class GameMechanics implements Tickable {
     }
 
     private void doMechanics() {
-        for(Message m: moves) {
-            if (m.getTopic() == Topic.BOMB) {
-                add(new Bomb());
 
-            }
-        }
     }
 
     private void writeReplica() {
@@ -35,6 +30,6 @@ public class GameMechanics implements Tickable {
     }
 
     public void setInputQueue(ConcurrentLinkedQueue<Message> inputQueue) {
-        this.inputQueue = inputQueue;
+
     }
 }

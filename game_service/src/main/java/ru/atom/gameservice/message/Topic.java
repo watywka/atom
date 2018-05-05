@@ -1,7 +1,8 @@
 package ru.atom.gameservice.message;
 
 public enum Topic {
-    BOMB,
-    MOVE
+    PLANT_BOMB,
+    MOVE,
+    JUMP
 }
 

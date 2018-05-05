@@ -21,7 +21,6 @@ public class GameSession implements Runnable {
     private Ticker ticker;
     private int numberOfPlayers;
     private GameMechanics gameMechanics;
-    private Set<Tickable> tickables = new ConcurrentSkipListSet<>();
 
     private Field field;
 
@@ -48,11 +47,18 @@ public class GameSession implements Runnable {
             List<Message> messages = readInputQueue();
             for (Message message : messages ) {
                 switch (message.getTopic()) {
-                    case BOMB:
+                    case PLANT_BOMB:
                         field.plantBomb(field.getPlayerByName(message.getName()));
+                        break;
                     case MOVE:
-
-
+                        //получаем плеера и ставим ему velx vely
+                        Player p = field.getPlayerByName(message.getName());
+                        int vx,vy;
+                        /*
+                        TODO: Нужно посмотреть как скорости запакованы в дату
+                        vx  = message.getData().toCharArray();
+                        p.
+                        */
                 }
             }
 
@@ -75,6 +81,11 @@ public class GameSession implements Runnable {
 
     private List<Message> readInputQueue() {
         List<Message> out = new ArrayList<>();
+        synchronized (inputQueue){  // Сделал на всякий случай , если здесь не нужна синхронизация , то удали)
+            out.addAll(inputQueue);
+            inputQueue.clear();
+        }
+
         return out;
     }
 

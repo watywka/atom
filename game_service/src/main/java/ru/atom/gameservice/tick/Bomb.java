@@ -28,6 +28,8 @@ public class Bomb extends GameObject implements Tickable{
                     fieldAt.setAlive(false);
                 }
             }
+            // Мы забыли убить бомбу после последнего тика))
+            this.setAlive(false);
 
         }
     }
