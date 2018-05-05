@@ -13,6 +13,9 @@ public class Player extends GameObject implements Tickable {
     private int pixelX;
     private int pixelY;
     protected int radius = 1;
+    List<PowerUp> powerUps;
+    private int bombCount = 2;
+    private int plantedBombs = 0;
 
 
     public Player(int x, int y, Field field, String name, int pixX, int pixY) {
@@ -21,7 +24,6 @@ public class Player extends GameObject implements Tickable {
         pixelX = x;
         pixelY = y;
     }
-
 
     public void setVels(int x, int y) {
         velX = x;
@@ -74,12 +76,27 @@ public class Player extends GameObject implements Tickable {
                 && pixelX + velX < field.pixRIGHTborder()
                 && pixelY + velY < field.pixTOPborder()       )
         {                                                 // not out of field
-            if (collideObj == null ) {
+            if (collideObj == null || collideObj instanceof PowerUp ) {
                 x += xTileVel;
                 y += yTileVel;
                 pixelX += velX;
                 pixelY += velY;
+                if (collideObj instanceof PowerUp){
+                    switch (((PowerUp)collideObj).getType()) {
+                        case BOMB_COUNT:
+                            bombCount++;
+                            break;
+                        case VELOCITY:
+                            //TODO: make velocity logic
+                            break;
+                        case BOMB_RADIUS:
+                            radius++;
+                            break;
+                    }
+
+                }
             }
+
 
         } else {
             // else: set x, y to the border
@@ -101,10 +118,22 @@ public class Player extends GameObject implements Tickable {
         velX = 0;
         velY = 0;
 
-        //TODO: check collisions
+        //TODO: check good collisions
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean tryToPlantBomb() {
+        if (plantedBombs < bombCount){
+            plantedBombs++;
+            return true;
+        }
+        return false;
+    }
+
+    public void giveNewBomb() {
+        plantedBombs--;
     }
 }

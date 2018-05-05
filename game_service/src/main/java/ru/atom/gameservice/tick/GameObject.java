@@ -6,9 +6,8 @@ public class GameObject {
     protected int x;
     protected int y;
 
-    protected Field field;
-
     protected boolean alive = true;
+    protected Field field;
 
     public GameObject(int x, int y, Field field) {
         this.x = x;

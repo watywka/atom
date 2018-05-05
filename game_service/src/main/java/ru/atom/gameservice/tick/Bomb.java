@@ -5,10 +5,12 @@ import java.lang.Math;
 public class Bomb extends GameObject implements Tickable{
     long timeToLive = 3000;
     private int radius = 1;
+    Player owner;
 
-    public Bomb(int x, int y,Field field, int radius) {
+    public Bomb(int x, int y,Field field, int radius, Player p) {
         super(x,y, field);
         this.radius = radius;
+        owner = p;
     }
 
     @Override
@@ -28,8 +30,9 @@ public class Bomb extends GameObject implements Tickable{
                     fieldAt.setAlive(false);
                 }
             }
-            // Мы забыли убить бомбу после последнего тика))
+            // Мы  убили бомбу после последнего тика и дали плееру новую
             this.setAlive(false);
+            owner.giveNewBomb();
 
         }
     }

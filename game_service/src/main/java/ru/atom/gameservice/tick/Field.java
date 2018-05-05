@@ -2,6 +2,7 @@ package ru.atom.gameservice.tick;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -88,11 +89,13 @@ public class Field {
     }
 
     public void plantBomb(Player player) {
-        plantBomb(player.x, player.y, player.radius);
+        if(player.tryToPlantBomb()) {
+            plantBomb(player.x, player.y, player.radius,player);
+        }
     }
 
-    public void plantBomb(int x, int y, int radius) {
-        gameObjects[x][y] = new Bomb(x, y, this, radius);
+    public void plantBomb(int x, int y, int radius, Player player) {
+        gameObjects[x][y] = new Bomb(x, y, this, radius, player);
     }
 
     public void Proyti_po_vsem(long elapsed) {
@@ -106,10 +109,31 @@ public class Field {
         }
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (!gameObjects[i][j].isAlive()) gameObjects[i][j] = null;
+                GameObject gameObject = gameObjects[i][j];
+
+                if (!gameObject.isAlive()){
+
+                    if (gameObject instanceof Box){
+
+                        generatePowerUp(i,j);
+                        continue;
+                    }
+                    gameObjects[i][j] = null;
+                }
+
+
             }
         }
 
+    }
+
+    public void generatePowerUp(int x, int y) {
+        Random rnd = new Random(System.currentTimeMillis());
+        int number = rnd.nextInt(100);
+        if(number>79){
+            number = 1+rnd.nextInt(3);
+            gameObjects[x][y] = new PowerUp(x,y,this,number);
+        }
     }
 
     public Player getPlayerByName(String name) {

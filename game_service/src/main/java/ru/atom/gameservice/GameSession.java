@@ -72,9 +72,11 @@ public class GameSession implements Runnable {
 
                 }
             }
-
-
+            // Проходит по всем тикаемым объектам
+            // Потом проверяет тех, кто умер и удаляет их с поля
             field.Proyti_po_vsem(FRAME_TIME);
+
+            
             long elapsed = System.currentTimeMillis() - started;
 
             if (elapsed < FRAME_TIME) {
