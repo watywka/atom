@@ -5,8 +5,21 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class Field {
 
-    private final int height;
-    private final int width;
+    /*
+
+    |-----------------> Y
+    |       width
+    |
+    | he
+    | ig
+    | ht
+    |
+    V X
+
+     */
+
+    private final int height; // X
+    private final int width;  // Y
     //перенес этот сет в field из gamesession мне кажетя логичнее...
     private Set<Tickable> tickables = new ConcurrentSkipListSet<>();
 

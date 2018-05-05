@@ -49,8 +49,16 @@ public class GameSession implements Runnable {
                 switch (message.getTopic()) {
                     case PLANT_BOMB:
                         field.plantBomb(field.getPlayerByName(message.getName()));
+                        break;
                     case MOVE:
-
+                        //получаем плеера и ставим ему velx vely
+                        Player p = field.getPlayerByName(message.getName());
+                        int vx,vy;
+                        /*
+                        TODO: Нужно посмотреть как скорости запакованы в дату
+                        vx  = message.getData().toCharArray();
+                        p.
+                        */
                 }
             }
 
