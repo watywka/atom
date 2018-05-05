@@ -40,6 +40,7 @@ public class EventHandler extends TextWebSocketHandler implements WebSocketHandl
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String source = connectionPool.getName(session);
         GameSession gameSession = gameServer.getGameSessionByPlayer(source);
+
         //gameSession.addInput(message);
         System.out.println("Received " + message.toString());
 

@@ -34,7 +34,7 @@ public class Player extends GameObject implements Tickable{
         if(velX > 0){
             for (int i = x;i< x+velX; i++){
                 GameObject fieldAt = field.getAt(i, y);
-                if (fieldAt instanceof Box || fieldAt instanceof Bomb || fieldAt instanceof Wall)
+                if (fieldAt instanceof Box || fieldAt instanceof Bomb || fieldAt instanceof Wall) {}
                     //FUCK THIS IS REALLY STUPID
             }
         }else{
@@ -55,7 +55,7 @@ public class Player extends GameObject implements Tickable{
         }
 
         if ((x+velX<field.getHeight())&&(y+velY<field.getWidth())) { // out of field
-            if ()
+            if (true)
             x += velX;
             y += velY;
         }else {
