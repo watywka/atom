@@ -1,9 +1,14 @@
 package ru.atom.gameservice.tick;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 public class Field {
 
     private final int height;
     private final int width;
+    //перенес этот сет в field из gamesession мне кажетя логичнее...
+    private Set<Tickable> tickables = new ConcurrentSkipListSet<>();
 
     private GameObject[][] gameObjects;
 
@@ -15,6 +20,9 @@ public class Field {
             gameObjects[i] = new GameObject[width];
 
         }
+        //Добавлю Стены WALL
+        for (int i =0;i<height; i +=2)
+            for (int j = 0; j < width; j+=2) gameObjects[i][j] = new Wall(i,j,this);
     }
 
     public int getHeight() {

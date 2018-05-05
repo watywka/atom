@@ -8,7 +8,7 @@ public class GameObject {
 
     protected Field field;
 
-    private boolean alive = true;
+    protected boolean alive = true;
 
     public GameObject(int x, int y, Field field) {
         this.x = x;
