@@ -1,5 +1,6 @@
 package ru.atom.gameservice.tick;
 
+
 public class Player extends GameObject implements Tickable{
 
     private final String name;
@@ -25,4 +26,5 @@ public class Player extends GameObject implements Tickable{
     public String getName() {
         return name;
     }
+
 }

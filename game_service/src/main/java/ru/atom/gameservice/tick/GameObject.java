@@ -16,6 +16,9 @@ public class GameObject {
         this.field = field;
     }
 
+    public GameObject() {
+    }
+
     public int getX() {
         return x;
     }
