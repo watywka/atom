@@ -5,4 +5,3 @@ public enum Topic {
     MOVE,
     JUMP
 }
-

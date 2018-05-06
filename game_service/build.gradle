@@ -27,6 +27,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile 'com.squareup.okhttp3:okhttp:3.10.0'
 	compile("org.springframework.boot:spring-boot-starter-websocket")
+	compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
 	testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.1.RELEASE'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+

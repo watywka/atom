@@ -9,6 +9,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import ru.atom.gameservice.message.JsonParser;
 import ru.atom.gameservice.network.ConnectionPool;
 
 @Component
@@ -37,12 +38,10 @@ public class EventHandler extends TextWebSocketHandler implements WebSocketHandl
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String source = connectionPool.getName(session);
-        GameSession gameSession = gameServer.getGameSessionByPlayer(source);
-        //gameSession.addInput(message);
-        System.out.println("Received " + message.toString());
-
+    protected void handleTextMessage(WebSocketSession session, TextMessage inputMessage) throws Exception {
+        String name = connectionPool.getName(session);
+        GameSession gameSession = gameServer.getGameSessionByPlayer(name);
+        gameSession.addInput(JsonParser.parse(inputMessage.getPayload(), name));
     }
 
     @Override
