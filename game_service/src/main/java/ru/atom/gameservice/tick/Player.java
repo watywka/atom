@@ -1,10 +1,5 @@
 package ru.atom.gameservice.tick;
 
-import ru.atom.gameservice.message.Message;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player extends GameObject implements Tickable {
 
     private final String name;
@@ -12,17 +7,16 @@ public class Player extends GameObject implements Tickable {
     private int velY;
     private int pixelX;
     private int pixelY;
-    protected int radius = 1;
-    List<PowerUp> powerUps;
-    private int bombCount = 2;
-    private int plantedBombs = 0;
+    protected int bombsRadius = 1;
+    private int bombsMax = 2;
+    private int bombsPlanted = 0;
 
 
-    public Player(int x, int y, Field field, String name, int pixX, int pixY) {
+    public Player(int x, int y, Field field, String name) {
         super(x, y, field);
         this.name = name;
-        pixelX = x;
-        pixelY = y;
+        pixelX = x*Field.tile;
+        pixelY = y*Field.tile;
     }
 
     public void setVels(int x, int y) {
@@ -41,7 +35,7 @@ public class Player extends GameObject implements Tickable {
         int xTileVel =0;
         int yTileVel = 0;
         if (velX > 0) {
-            int newX = (pixelX + velX) / field.tile;
+            int newX = (pixelX + velX) / Field.tile;
             if (newX != x){
                 collideObj = field.getAt(newX, y);
                 xTileVel++;
@@ -49,7 +43,7 @@ public class Player extends GameObject implements Tickable {
 
         }
         if (velX < 0) {
-            int newX = (pixelX + velX) / field.tile;
+            int newX = (pixelX + velX) / Field.tile;
             if (newX != x){
                 collideObj = field.getAt(newX, y);
                 xTileVel--;
@@ -57,14 +51,14 @@ public class Player extends GameObject implements Tickable {
         }
         // по Y
         if (velY > 0) {
-            int newY = (pixelY + velY) / field.tile;
+            int newY = (pixelY + velY) / Field.tile;
             if (newY != x) {
                 collideObj = field.getAt(x, newY);
                 yTileVel++;
             }
         }
         if (velY < 0) {
-            int newY = (pixelY + velY) / field.tile;
+            int newY = (pixelY + velY) / Field.tile;
             if (newY != x) {
                 collideObj = field.getAt(x, newY);
                 yTileVel--;
@@ -73,7 +67,7 @@ public class Player extends GameObject implements Tickable {
 
         if ( pixelX + velX < field.pixLEFTborder()
                 && pixelY + velY < field.pixBOTTOMborder()
-                && pixelX + velX < field.pixRIGHTborder()
+                && pixelX + velX < field.getRightBorder()
                 && pixelY + velY < field.pixTOPborder()       )
         {                                                 // not out of field
             if (collideObj == null || collideObj instanceof PowerUp ) {
@@ -84,13 +78,13 @@ public class Player extends GameObject implements Tickable {
                 if (collideObj instanceof PowerUp){
                     switch (((PowerUp)collideObj).getType()) {
                         case BOMB_COUNT:
-                            bombCount++;
+                            bombsMax++;
                             break;
                         case VELOCITY:
                             //TODO: make velocity logic
                             break;
                         case BOMB_RADIUS:
-                            radius++;
+                            bombsRadius++;
                             break;
                     }
 
@@ -102,7 +96,7 @@ public class Player extends GameObject implements Tickable {
             // else: set x, y to the border
             if (velX > 0) {
                 x = field.getWidth();
-                pixelX = field.pixRIGHTborder();
+                pixelX = field.getRightBorder();
             }else {
                 x = 0;
                 pixelX = field.pixLEFTborder();
@@ -126,14 +120,14 @@ public class Player extends GameObject implements Tickable {
     }
 
     public boolean tryToPlantBomb() {
-        if (plantedBombs < bombCount){
-            plantedBombs++;
+        if (bombsPlanted < bombsMax){
+            bombsPlanted++;
             return true;
         }
         return false;
     }
 
     public void giveNewBomb() {
-        plantedBombs--;
+        bombsPlanted--;
     }
 }

@@ -3,14 +3,14 @@ package ru.atom.gameservice.tick;
 import java.lang.Math;
 
 public class Bomb extends GameObject implements Tickable{
-    long timeToLive = 3000;
+    private long timeToLive = 3000;
     private int radius = 1;
-    Player owner;
+    private Player owner;
 
     public Bomb(int x, int y,Field field, int radius, Player p) {
         super(x,y, field);
         this.radius = radius;
-        owner = p;
+        this.owner = p;
     }
 
     @Override
