@@ -19,99 +19,27 @@ public class Player extends GameObject implements Tickable {
         pixelY = y*Field.tile;
     }
 
-    public void setVels(int x, int y) {
-        velX = x;
-        velY = y;
+    public void changeVelocity(int dx, int dy) {
+        velX += dx;
+        velY += dy;
     }
 
 
     @Override
     public void tick(long elapsed) {
-        //some collision check
-        GameObject collideObj = null;
-
-        //Очень плохой способ поиска сталкивающихся объектов
-        // по Х
-        int xTileVel =0;
-        int yTileVel = 0;
-        if (velX > 0) {
+        if(alive) {
             int newX = (pixelX + velX) / Field.tile;
-            if (newX != x){
-                collideObj = field.getAt(newX, y);
-                xTileVel++;
-            }
-
-        }
-        if (velX < 0) {
-            int newX = (pixelX + velX) / Field.tile;
-            if (newX != x){
-                collideObj = field.getAt(newX, y);
-                xTileVel--;
-            }
-        }
-        // по Y
-        if (velY > 0) {
             int newY = (pixelY + velY) / Field.tile;
-            if (newY != x) {
-                collideObj = field.getAt(x, newY);
-                yTileVel++;
+            GameObject collideObj = field.getAt(newX, newY);
+            if (collideObj == null || !Field.checkCollision(newX, newY, collideObj)) {
+                pixelX = velX;
+                pixelY = velY;
+                x = newX;
+                y = newY;
             }
+            velX = 0;
+            velY = 0;
         }
-        if (velY < 0) {
-            int newY = (pixelY + velY) / Field.tile;
-            if (newY != x) {
-                collideObj = field.getAt(x, newY);
-                yTileVel--;
-            }
-        }
-
-        if ( pixelX + velX < field.pixLEFTborder()
-                && pixelY + velY < field.pixBOTTOMborder()
-                && pixelX + velX < field.getRightBorder()
-                && pixelY + velY < field.pixTOPborder()       )
-        {                                                 // not out of field
-            if (collideObj == null || collideObj instanceof PowerUp ) {
-                x += xTileVel;
-                y += yTileVel;
-                pixelX += velX;
-                pixelY += velY;
-                if (collideObj instanceof PowerUp){
-                    switch (((PowerUp)collideObj).getType()) {
-                        case BOMB_COUNT:
-                            bombsMax++;
-                            break;
-                        case VELOCITY:
-                            //TODO: make velocity logic
-                            break;
-                        case BOMB_RADIUS:
-                            bombsRadius++;
-                            break;
-                    }
-
-                }
-            }
-
-
-        } else {
-            // else: set x, y to the border
-            if (velX > 0) {
-                x = field.getWidth();
-                pixelX = field.getRightBorder();
-            }else {
-                x = 0;
-                pixelX = field.pixLEFTborder();
-            }
-            if (velY > 0) {
-                y = field.getHeight();
-                pixelY = field.pixBOTTOMborder();
-            }else {
-                y = 0;
-                pixelY = field.pixTOPborder();
-            }
-        }
-        velX = 0;
-        velY = 0;
-
         //TODO: check good collisions
     }
 
@@ -129,5 +57,13 @@ public class Player extends GameObject implements Tickable {
 
     public void giveNewBomb() {
         bombsPlanted--;
+    }
+
+    @Override
+    public String toJson() {
+        return String.format("{\"position\":{\"x\":%d,\"y\":%d},\"id\":%d, \"type\":\"Pawn\"}",
+                x * Field.tile,
+                y * Field.tile,
+                id);
     }
 }

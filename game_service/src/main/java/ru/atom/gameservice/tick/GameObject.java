@@ -1,7 +1,9 @@
 package ru.atom.gameservice.tick;
 
 
-public class GameObject {
+public abstract class GameObject {
+
+    protected int id;
 
     protected int x;
     protected int y;
@@ -10,6 +12,7 @@ public class GameObject {
     protected Field field;
 
     public GameObject(int x, int y, Field field) {
+        this.id = field.getNextId();
         this.x = x;
         this.y = y;
         this.field = field;
@@ -41,4 +44,6 @@ public class GameObject {
     public void setAlive(boolean alive) {
         this.alive = alive;
     }
+
+    public abstract String toJson();
 }

@@ -2,21 +2,11 @@ package ru.atom.gameservice.tick;
 
 public class PowerUp extends GameObject {
 
-    private  PowerUpType type = PowerUpType.BOMB_COUNT;//TODO: make final
+    private final PowerUpType type;
 
-    public PowerUp(int x, int y, Field field, int number) {
+    public PowerUp(int x, int y, Field field) {
         super(x, y, field);
-        switch (number) {
-            case 1:
-                type = PowerUpType.BOMB_COUNT;
-                break;
-            case 2:
-                type = PowerUpType.BOMB_RADIUS;
-                break;
-            case 3:
-                type = PowerUpType.VELOCITY;
-                break;
-        }
+        type = PowerUpType.getRandomType();
     }
 
     public PowerUpType getType() {
@@ -24,4 +14,8 @@ public class PowerUp extends GameObject {
     }
 
 
+    @Override
+    public String toJson() {
+        return null;
+    }
 }

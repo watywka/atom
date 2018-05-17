@@ -20,7 +20,7 @@ public class JsonParser {
                 case MOVE:
                     Direction direction= Direction.valueOf(rootNode.get("data").get("direction").asText());
                     return  new MoveMessage(topic, direction, name);
-                case BOMB:
+                case PLANT_BOMB:
                     return new BombMessage(topic, name);
             }
             logger.info("JSON -> Message", jsonString);

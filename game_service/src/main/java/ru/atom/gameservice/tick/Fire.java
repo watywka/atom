@@ -23,4 +23,9 @@ public class Fire extends GameObject implements Tickable{
             this.setAlive(false);
         }
     }
+
+    @Override
+    public String toJson() {
+        return null;
+    }
 }

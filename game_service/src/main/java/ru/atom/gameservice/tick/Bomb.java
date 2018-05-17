@@ -7,9 +7,9 @@ public class Bomb extends GameObject implements Tickable{
     private int radius = 1;
     private Player owner;
 
-    public Bomb(int x, int y,Field field, int radius, Player p) {
-        super(x,y, field);
-        this.radius = radius;
+    public Bomb(Field field, Player p) {
+        super(p.x, p.y, field);
+        this.radius = p.bombsRadius;
         this.owner = p;
     }
 
@@ -36,4 +36,13 @@ public class Bomb extends GameObject implements Tickable{
 
         }
     }
+
+    @Override
+    public String toJson() {
+        return String.format("{\"position\":{\"x\":%d,\"y\":%d},\"id\":%d,\"type\":\"Bomb\"}",
+                x * Field.tile,
+                y * Field.tile,
+                id);
+    }
+
 }

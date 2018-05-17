@@ -19,7 +19,7 @@ public class Field {
     V Y
 
      */
-
+    private int idGenerator;
     private final int height; // Y
     private final int width;  // X
     public static final int tile = 48;   // количество пикселей
@@ -76,17 +76,13 @@ public class Field {
     }
 
     public GameObject getAt(int x, int y) {
-        return gameObjects[x][y];
+        return (x < 0 || y < 0 || x > width || y > height) ? null : gameObjects[x][y];
     }
 
     public void plantBomb(Player player) {
         if(player.tryToPlantBomb()) {
-            plantBomb(player.x, player.y, player.bombsRadius,player);
+            gameObjects[player.x][player.y] = new Bomb(this, player);
         }
-    }
-
-    public void plantBomb(int x, int y, int radius, Player player) {
-        gameObjects[x][y] = new Bomb(x, y, this, radius, player);
     }
 
     public void Proyti_po_vsem(long elapsed) {
@@ -117,8 +113,7 @@ public class Field {
         Random rnd = new Random(System.currentTimeMillis());
         int number = rnd.nextInt(100);
         if(number>79){
-            number = 1+rnd.nextInt(3);
-            gameObjects[x][y] = new PowerUp(x,y,this,number);
+            gameObjects[x][y] = new PowerUp(x,y,this);
         }
     }
 
@@ -132,5 +127,33 @@ public class Field {
             }
         }
         return null;
+    }
+
+    //взято с фронта
+    public static boolean checkCollision(int newX, int newY, GameObject collideObj) {
+        int down = collideObj.x*tile + 20;
+        int up = down + tile - 30;
+        int left = collideObj.x*tile + 25;
+        int right = left + tile - 30;
+        return (down < collideObj.y*tile)
+                && (up > collideObj.y*tile + tile)
+                && (left < collideObj.x*tile + tile)
+                && (right > collideObj.x*tile);
+    }
+
+    public int getNextId() {
+        return idGenerator++;
+    }
+
+    public String getReplica() {
+        StringBuilder stringBuilder = new StringBuilder("{   \"topic\": \"REPLICA\",   \"data\": {  \"objects\":[");
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                stringBuilder.append(gameObjects[i][j].toJson());
+                stringBuilder.append(",");
+            }
+        }
+        stringBuilder.append("],       \"gameOver\":false   }}");
+        return stringBuilder.toString();
     }
 }

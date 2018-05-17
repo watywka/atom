@@ -6,5 +6,13 @@ public class Box extends GameObject {
         super(x, y, field);
     }
 
+    @Override
+    public String toJson() {
+        return String.format("{\"position\":{\"x\":%d,\"y\":%d},\"id\":%d,\"type\":\"Box\"}",
+                x * Field.tile,
+                y * Field.tile,
+                id);
+    }
+
 
 }

@@ -1,23 +1,17 @@
 package ru.atom.gameservice;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.socket.TextMessage;
+import ru.atom.gameservice.message.Direction;
 import ru.atom.gameservice.message.Message;
-import ru.atom.gameservice.message.Topic;
+import ru.atom.gameservice.message.MoveMessage;
 import ru.atom.gameservice.network.ConnectionPool;
 import ru.atom.gameservice.tick.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -28,13 +22,8 @@ public class GameSession implements Runnable {
 
     private List<String> players;
     private ConcurrentLinkedQueue<Message> inputQueue;
-    private Ticker ticker;
-    private int numberOfPlayers;
-    private GameMechanics gameMechanics;
 
     private Field field;
-
-    private long tickNumber = 0;
 
     public void addInput(Message message) {
         inputQueue.add(message);
@@ -43,10 +32,7 @@ public class GameSession implements Runnable {
 
 
     public GameSession(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
         players = new ArrayList<>(numberOfPlayers);
-        gameMechanics.setInputQueue(inputQueue);
-        ticker.registerTickable(gameMechanics);
     }
 
     @Override
@@ -55,6 +41,35 @@ public class GameSession implements Runnable {
         final int FPS = 60;
         final long FRAME_TIME = 1000 / FPS;
         while (!Thread.currentThread().isInterrupted()) {
+            long started = System.currentTimeMillis();
+
+            List<Message> messages = readInputQueue();
+            for (Message message : messages) {
+                switch (message.getTopic()) {
+                    case PLANT_BOMB:
+                        field.plantBomb(field.getPlayerByName(message.getName()));
+                        break;
+                    case MOVE:
+                        //получаем плеера и ставим ему velx vely
+                        //TODO: чекнуть, приходит ли в месседже имя игрока
+                        Player p = field.getPlayerByName(message.getName());
+                        Direction direction = ((MoveMessage)message).getDirection();
+                        p.changeVelocity(direction.getX(),direction.getY());
+
+                }
+            }
+            // Проходит по всем тикаемым объектам
+            // Потом проверяет тех, кто умер и удаляет их с поля
+            field.Proyti_po_vsem(FRAME_TIME);
+
+            long elapsed = System.currentTimeMillis() - started;
+
+            if (elapsed < FRAME_TIME) {
+                LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(FRAME_TIME - elapsed));
+            } else {
+                log.warn("tick lag {} ms", elapsed - FRAME_TIME);
+            }
+
             for(String name: players) {
                 ConnectionPool connectionPool = BeanUtil.getBean(ConnectionPool.class);
                 try {
@@ -70,53 +85,8 @@ public class GameSession implements Runnable {
                     e.printStackTrace();
                 }
             }
-            long started = System.currentTimeMillis();
-
-            List<Message> messages = readInputQueue();
-            for (Message message : messages) {
-                switch (message.getTopic()) {
-                    case PLANT_BOMB:
-                        field.plantBomb(field.getPlayerByName(message.getName()));
-                        break;
-                    case MOVE:
-                        //получаем плеера и ставим ему velx vely
-                        Player p = field.getPlayerByName(message.getName());//TODO: чекнуть, приходит ли в месседже имя игрока
-                        int vX = 0, vY = 0;
-                        String direction = message.getData();
-                        if (direction.endsWith("UP\"}")){
-                            vY = -1;
-                        }
-                        if (direction.endsWith("DOWN\"}")){
-                            vY = 1;
-                        }
-                        if (direction.endsWith("RIGHT\"}")){
-                            vX= 1;
-                        }
-                        if (direction.endsWith("UP\"}")){
-                            vX = -1;
-                        }
-                        p.setVels(vX,vY);
-
-                }
-            }
-            // Проходит по всем тикаемым объектам
-            // Потом проверяет тех, кто умер и удаляет их с поля
-            field.Proyti_po_vsem(FRAME_TIME);
-
-            
-            long elapsed = System.currentTimeMillis() - started;
-
-            if (elapsed < FRAME_TIME) {
-                log.info("All tick finish at {} ms", elapsed);
-                LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(FRAME_TIME - elapsed));
-            } else {
-                log.warn("tick lag {} ms", elapsed - FRAME_TIME);
-            }
-            log.info("{}: tick ", tickNumber);
-            tickNumber++;
         }
 
-//        ticker.gameLoop();
     }
 
     private List<Message> readInputQueue() {
