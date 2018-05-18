@@ -5,20 +5,20 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "public.players")
+@Table(name = "players", schema = "public")
 public class Player implements Serializable {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    @Column(name = "login")
+    @Column(name = "login", unique = true, nullable = false, length = 40)
     private String login;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false, length = 40)
     private String password;
 
-    @Column(name = "rating")
+    @Column(name = "rating", nullable = false)
     private int rating;
 
     @Column(name = "isonline")
@@ -88,6 +88,7 @@ public class Player implements Serializable {
     }
 
     public Player() {
+        rating = 1500;
     }
 
     public Player(String login, String password) {

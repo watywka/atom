@@ -14,6 +14,11 @@ public class PlayerDaoImpl implements PlayerDao{
         this.sessionFactory = sessionFactory;
     }
 
+/*
+    @Override
+    public Player getByLogin(String login) {
+        return null;
+    }*/
     @Override
     public void save(Player player) {
         Session session = this.sessionFactory.openSession();
