@@ -4,13 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import ru.atom.matchmaker.Controller.MatchmakerController;
 import ru.atom.matchmaker.players.model.Player;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+
 import javax.transaction.Transactional;
 import java.util.List;
 
+@Service
 @Repository
 @Transactional
 public class PlayerDaoImpl implements PlayerDao{
@@ -19,6 +22,7 @@ public class PlayerDaoImpl implements PlayerDao{
 
     @Autowired
     private SessionFactory sessionFactory;
+
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

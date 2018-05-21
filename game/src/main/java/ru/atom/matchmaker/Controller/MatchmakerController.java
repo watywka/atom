@@ -29,9 +29,6 @@ public class MatchmakerController {
     }
 
     @Autowired
-    private SessionFactory sessionFactory;
-
-    @Autowired
     private PlayerDao playerDao;
 
     @RequestMapping(path = "join",
