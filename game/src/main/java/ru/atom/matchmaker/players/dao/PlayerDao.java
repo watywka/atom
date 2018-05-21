@@ -4,7 +4,16 @@ import ru.atom.matchmaker.players.model.Player;
 import java.util.List;
 
 public interface PlayerDao {
-    //public Player getByLogin(String login);
-    public void save (Player player);
-    public List<Player> getPlayerList();
+
+    void save (Player player);
+
+    void update(Player player);
+
+    void delete(Player player);
+
+    Player getById(long id);
+
+    Player getByLogin(String login);
+
+    List<Player> getPlayerList();
 }
