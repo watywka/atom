@@ -211,6 +211,7 @@ hr {
     <script>
     var host = "localhost";
     var port = 8080;
+
     function login() {
         var name = $('#logform').serialize();
 
@@ -227,6 +228,9 @@ hr {
     modal2.style.display = "none";
 
     $( "#lore" ).hide();
+    field.style.display = "block";
+    m = new Menu();
+    m.drawStartButton();
 
     }).fail(function (jqXHR, textStatus) {
     alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
@@ -244,6 +248,7 @@ hr {
             "data": name
         };
 
+    //console.log(settings); //REG
     $.ajax(settings).done(function (response) {
         modal.style.display = "none";
         console.log("sign ok");
@@ -270,7 +275,7 @@ window.onclick = function(event) {
     </script>
 </div>
 
-<div class="container">
+<div id="field" class="field" style="display: none;">
         <div class="page-header">
         </div>
         <div id="game">
