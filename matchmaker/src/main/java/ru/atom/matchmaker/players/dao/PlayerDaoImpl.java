@@ -30,7 +30,6 @@ public class PlayerDaoImpl implements PlayerDao{
         return entityManager;
     }
 
-
     @Override
     public void save(Player player) {
         entityManager.persist(player);
