@@ -41,30 +41,31 @@ public class Player extends GameObject implements Tickable {
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
             switch (direction) {
                 case UP:
-                    x1 = pixelX - Field.tile;
-                    x2 = pixelX + Field.tile;
+                    x1 = pixelX - Field.tile/4;
+                    x2 = pixelX + Field.tile/4;
                     y1 = y2 = pixelY + Field.tile;
                     break;
                 case DOWN:
-                    x1 = pixelX - Field.tile;
-                    x2 = pixelX + Field.tile;
+                    x1 = pixelX - Field.tile/4;
+                    x2 = pixelX + Field.tile/4;
                     y1 = y2 = pixelY - Field.tile;
                     break;
                 case LEFT:
                     x1 = x2 = pixelX - Field.tile;
-                    y1 = pixelY + Field.tile;
-                    y2 = pixelY - Field.tile;
+                    y1 = pixelY + Field.tile/4;
+                    y2 = pixelY - Field.tile/4;
                     break;
                 case RIGHT:
-                    x1 = x2 = pixelX + Field.tile/2;
-                    y1 = pixelY + Field.tile/2;
-                    y2 = pixelY - Field.tile/2;
+                    x1 = x2 = pixelX + Field.tile;
+                    y1 = pixelY + Field.tile/4;
+                    y2 = pixelY - Field.tile/4;
                     break;
 
             }
             GameObject col1 = field.getAt(x1/Field.tile, y1/Field.tile);
             GameObject col2 = field.getAt(x2/Field.tile, y2/Field.tile);
-            boolean collide = Field.checkCollision(pixelX + velX, pixelY + velY, col1)
+            boolean collide;
+            collide= Field.checkCollision(pixelX + velX, pixelY + velY, col1)
                     || Field.checkCollision(pixelX + velX, pixelY + velY, col2);
             if (!collide) {
                 if (col1 instanceof Fire || col2 instanceof Fire) this.setAlive(false);

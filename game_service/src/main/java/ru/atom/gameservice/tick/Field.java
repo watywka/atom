@@ -135,10 +135,10 @@ public class Field {
         int up1 = down1 + tile;
         int left1 = collideObj.x*tile;
         int right1 = left1 + tile;
-        int up2 = centerY + Field.tile / 2 - 4;
-        int down2 = centerY - Field.tile / 2 + 4;
-        int left2 = centerX - Field.tile / 2 + 4;
-        int right2 = centerX + Field.tile / 2 - 4;
+        int up2 = centerY + Field.tile / 2;
+        int down2 = centerY - Field.tile / 2 ;
+        int left2 = centerX - Field.tile / 2 ;
+        int right2 = centerX + Field.tile / 2 ;
         return (down1 <= up2)
                 && (up1 >= down2)
                 && (left1 <= right2)
