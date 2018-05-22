@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import ru.atom.matchmaker.Controller.MatchmakerController;
+import ru.atom.matchmaker.controller.MatchmakerController;
 import ru.atom.matchmaker.players.model.Player;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

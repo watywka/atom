@@ -1,6 +1,5 @@
-package ru.atom.matchmaker.Controller;
+package ru.atom.matchmaker.controller;
 
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,10 @@ public class MatchmakerController {
     }
 
     @CrossOrigin(origins = "*")
-    @RequestMapping(path = "join",
+    @RequestMapping(path = "login",
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> join(@RequestParam("Login") String login, @RequestParam("password") String password) {
+    public ResponseEntity<String> login(@RequestParam("Login") String login, @RequestParam("password") String password) {
         logger.info("New connection: Login = {}", login);
 
         Player player = playerDao.getByLogin(login);
