@@ -95,6 +95,9 @@ public class Player implements Serializable {
         this.login = login;
         this.password = password;
         this.rating = 1500;
+        this.idSession = -1;
+        this.inSearch = false;
+        this.isOnline = false;
     }
 
     @Override

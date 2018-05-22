@@ -8,6 +8,8 @@ public class Connection {
 
     private boolean available = true;
 
+    private int rating;
+
 
     public boolean isAvailable() {
         return available;
@@ -18,8 +20,9 @@ public class Connection {
         this.available = available;
     }
 
-    public Connection(String name) {
+    public Connection(String name, int rating) {
         this.name = name;
+        this.rating = rating;
     }
 
     public String getName() {
@@ -33,5 +36,13 @@ public class Connection {
     public Connection setGameId(long gameId) {
         this.gameId = gameId;
         return this;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
