@@ -31,8 +31,8 @@ public class MatchmakerController {
     @RequestMapping(path = "login",
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> login(@RequestParam("Login") String login, @RequestParam("password") String password) {
-        logger.info("New connection: Login = {} beda", login);
+    public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password") String password) {
+        logger.info("New connection: Login = {}", login);
 
         Player player = playerDao.getByLogin(login);
         if (player == null){
@@ -52,14 +52,14 @@ public class MatchmakerController {
             return ResponseEntity.badRequest().body("smt is wrong in login");
         }
 
-        return ResponseEntity.badRequest().body("0");
+        return ResponseEntity.ok().body("0");
     }
 
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "logout",
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> logout(@RequestParam("Login") String login) {
+    public ResponseEntity<String> logout(@RequestParam("login") String login) {
         logger.info("New connection: Login = {}", login);
 
         Player player = playerDao.getByLogin(login);
@@ -84,7 +84,7 @@ public class MatchmakerController {
     @RequestMapping(path = "registration",
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> registration(@RequestParam("Login") String login, @RequestParam("password") String password) {
+    public ResponseEntity<String> registration(@RequestParam("login") String login, @RequestParam("password") String password) {
         logger.info("New player: Login = {}", login);
 
         if (login.length() < 4) {
@@ -112,10 +112,10 @@ public class MatchmakerController {
     }
 
     @CrossOrigin(origins = "*")
-    @RequestMapping(path = "findGame",
+    @RequestMapping(path = "join",
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> Find(@RequestParam("Login") String login) {
+    public ResponseEntity<String> join(@RequestParam("login") String login) {
 
         logger.info("new finder: Login = {}", login);
 
