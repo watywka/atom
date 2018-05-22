@@ -25,11 +25,6 @@ public class PlayerDaoImpl implements PlayerDao{
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PersistenceContext
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
     @Override
     public void save(Player player) {
         entityManager.persist(player);
@@ -44,7 +39,6 @@ public class PlayerDaoImpl implements PlayerDao{
         entityManager.merge(player);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Player> getPlayerList() {
         return entityManager.createQuery("from Player", Player.class).getResultList();
