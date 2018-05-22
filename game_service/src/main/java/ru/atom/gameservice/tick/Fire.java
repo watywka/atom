@@ -26,6 +26,6 @@ public class Fire extends GameObject implements Tickable{
 
     @Override
     public String toJson() {
-        return null;
+        return "";
     }
 }

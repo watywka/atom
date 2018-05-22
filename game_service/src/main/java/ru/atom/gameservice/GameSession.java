@@ -12,18 +12,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 public class GameSession implements Runnable {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(GameSession.class);
+    private static final ConnectionPool connectionPool = BeanUtil.getBean(ConnectionPool.class);
 
-    private ConnectionPool connectionPool;
-
-    private List<String> players;
-    private ConcurrentLinkedQueue<Message> inputQueue;
+    private final int numberOfPlayers;
+    private CopyOnWriteArrayList<String> players;
+    private final ConcurrentLinkedQueue<Message> inputQueue = new ConcurrentLinkedQueue<>();
 
     private Field field;
+
+    public List<String> getPlayers() {
+        return players;
+    }
+
+    public void addPlayer(String name) {
+        players.add(name);
+    }
 
     public void addInput(Message message) {
         inputQueue.add(message);
@@ -32,12 +41,21 @@ public class GameSession implements Runnable {
 
 
     public GameSession(int numberOfPlayers) {
-        players = new ArrayList<>(numberOfPlayers);
+        this.numberOfPlayers = numberOfPlayers;
+        players = new CopyOnWriteArrayList<>();
     }
 
     @Override
     public void run() {
-        field = new Field(10,10, players);
+        while (players.size() != numberOfPlayers) {
+            try {
+                log.info("Waiting for players");
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        field = new Field(10, 10, players);
         final int FPS = 60;
         final long FRAME_TIME = 1000 / FPS;
         while (!Thread.currentThread().isInterrupted()) {
@@ -51,16 +69,19 @@ public class GameSession implements Runnable {
                         break;
                     case MOVE:
                         //получаем плеера и ставим ему velx vely
-                        //TODO: чекнуть, приходит ли в месседже имя игрока
                         Player p = field.getPlayerByName(message.getName());
-                        Direction direction = ((MoveMessage)message).getDirection();
-                        p.changeVelocity(direction.getX(),direction.getY());
+                        if (p != null) {
+                            Direction direction = ((MoveMessage) message).getDirection();
+                            p.changeVelocity(direction.getX(), direction.getY());
+                            p.setDirection(direction);
+                        }
+                        break;
 
                 }
             }
             // Проходит по всем тикаемым объектам
             // Потом проверяет тех, кто умер и удаляет их с поля
-            field.Proyti_po_vsem(FRAME_TIME);
+            field.gameLogic(FRAME_TIME);
 
             long elapsed = System.currentTimeMillis() - started;
 
@@ -70,36 +91,24 @@ public class GameSession implements Runnable {
                 log.warn("tick lag {} ms", elapsed - FRAME_TIME);
             }
 
-            for(String name: players) {
-                ConnectionPool connectionPool = BeanUtil.getBean(ConnectionPool.class);
+            String replica = field.getReplica();
+            for (String name : players) {
                 try {
-                    connectionPool.getSession(name).sendMessage(new TextMessage("{\n" +
-                            "   \"topic\": \"REPLICA\",\n" +
-                            "   \"data\":\n" +
-                            "   {\n" +
-                            "       \"objects\":[{\"position\":{\"x\":16.0,\"y\":12.0},\"id\":16,\"type\":\"Wall\"},{\"position\":{\"x\":32.0,\"y\":32.0},\"id\":213,\"velocity\":0.05,\"maxBombs\":1,\"bombPower\":1,\"speedModifier\":1.0,\"type\":\"Pawn\"},{\"position\":{\"x\":32.0,\"y\":352.0},\"id\":214,\"velocity\":0.05,\"maxBombs\":1,\"bombPower\":1,\"speedModifier\":1.0,\"type\":\"Pawn\"}],\n" +
-                            "       \"gameOver\":false\n" +
-                            "   }\n" +
-                            "} "));
+                    connectionPool.getSession(name).sendMessage(new TextMessage(replica));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-
     }
+
 
     private List<Message> readInputQueue() {
-        List<Message> out = new ArrayList<>();
+        List<Message> out;
         synchronized (inputQueue) {  // Сделал на всякий случай , если здесь не нужна синхронизация , то удали)
-            out.addAll(inputQueue);
+            out = new ArrayList<>(inputQueue);
             inputQueue.clear();
         }
-
         return out;
-    }
-
-    public void addPlayer(String name) {
-        players.add(name);
     }
 }

@@ -6,19 +6,17 @@ public class Wall extends GameObject{
      попробовал перегрузить поле alive как final и сделал true
      не уверен, что это сработает
      */
-    private final boolean alive = true;
+    private boolean alive = true;
 
     public Wall(int x, int y, Field field) {
         super(x, y, field);
     }
 
     @Override
-    public boolean isAlive() {
-        return true;
-    }
-
-    @Override
-    public void setAlive(boolean alive) {
-        return;
+    public String toJson() {
+        return String.format("{\"position\":{\"x\":%d,\"y\":%d}, \"id\":%d, \"type\":\"Wall\"}",
+                x * Field.tile,
+                y * Field.tile,
+                id);
     }
 }

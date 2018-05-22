@@ -1,9 +1,9 @@
 package ru.atom.gameservice.tick;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Field {
 
@@ -23,14 +23,15 @@ public class Field {
     private final int height; // Y
     private final int width;  // X
     public static final int tile = 48;   // количество пикселей
-    //перенес этот сет в field из gamesession мне кажетя логичнее...
-    private Set<Tickable> tickables = new ConcurrentSkipListSet<>();
+
+    private Set<GameObject> replicaObjects;
 
     private GameObject[][] gameObjects;
 
     public Field(int height, int width, List<String> players) {
         this.height = height;
         this.width = width;
+        replicaObjects = new HashSet<>();
         gameObjects = new GameObject[height][];
         for (int i = 0; i < height; i++) {
             gameObjects[i] = new GameObject[width];
@@ -38,7 +39,11 @@ public class Field {
 
         //Добавлю Стены WALL
         for (int i = 1; i < height; i += 2)
-            for (int j = 1; j < width; j+= 2) gameObjects[i][j] = new Wall(i, j, this);
+            for (int j = 1; j < width; j+= 2) {
+                Wall wall = new Wall(i, j, this);
+                gameObjects[i][j] = new Wall(i, j, this);
+                replicaObjects.add(wall);
+            }
 
         //Добавлю Игроков
         int[] X = {0, 9, 0, 9};
@@ -47,24 +52,8 @@ public class Field {
         for (int i = 0; i < 4; i++) {
             Player player = new Player(X[i],Y[i],this, players.get(i));
             gameObjects[X[i]][Y[i]] = player;
+            replicaObjects.add(player);
         }
-    }
-
-    public int getRightBorder(){
-        return width*tile - 8;
-    }
-    public int pixLEFTborder(){
-        return 8;
-    }
-    public int pixTOPborder(){
-        return 8;
-    }
-    public int pixBOTTOMborder(){
-        return height*tile - 8;
-    }
-
-    public static int PixelsToTiles(int x){
-        return x/tile;
     }
 
     public int getHeight() {
@@ -76,16 +65,17 @@ public class Field {
     }
 
     public GameObject getAt(int x, int y) {
-        return (x < 0 || y < 0 || x > width || y > height) ? null : gameObjects[x][y];
+        return (x < 0 || y < 0 || x >= width || y >= height) ? null : gameObjects[x][y];
     }
 
     public void plantBomb(Player player) {
         if(player.tryToPlantBomb()) {
             gameObjects[player.x][player.y] = new Bomb(this, player);
+            replicaObjects.add(gameObjects[player.x][player.y]);
         }
     }
 
-    public void Proyti_po_vsem(long elapsed) {
+    public void gameLogic(long elapsed) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 GameObject gameObject = gameObjects[i][j];
@@ -97,24 +87,17 @@ public class Field {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 GameObject gameObject = gameObjects[i][j];
-                if (!gameObject.isAlive()){
-                    if (gameObject instanceof Box){
-                        generatePowerUp(i,j);
-                        continue;
-                    }
-                    gameObjects[i][j] = null;
+                if (gameObject instanceof Player || gameObject instanceof Bomb) {
+                    replicaObjects.add(gameObject);
+                }
+                if (gameObject != null && !gameObject.isAlive()){
+                    replicaObjects.add(gameObject);
+                    gameObjects[i][j] = (gameObject instanceof Box) ? PowerUp.generateNewPowerUp(i, j, this) : null;
+                    if (gameObjects[i][j] != null) replicaObjects.add(gameObjects[i][j]);
                 }
             }
         }
 
-    }
-
-    private void generatePowerUp(int x, int y) {
-        Random rnd = new Random(System.currentTimeMillis());
-        int number = rnd.nextInt(100);
-        if(number>79){
-            gameObjects[x][y] = new PowerUp(x,y,this);
-        }
     }
 
     public Player getPlayerByName(String name) {
@@ -131,6 +114,7 @@ public class Field {
 
     //взято с фронта
     public static boolean checkCollision(int newX, int newY, GameObject collideObj) {
+        if(collideObj == null) return false;
         int down = collideObj.x*tile + 20;
         int up = down + tile - 30;
         int left = collideObj.x*tile + 25;
@@ -146,14 +130,11 @@ public class Field {
     }
 
     public String getReplica() {
-        StringBuilder stringBuilder = new StringBuilder("{   \"topic\": \"REPLICA\",   \"data\": {  \"objects\":[");
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                stringBuilder.append(gameObjects[i][j].toJson());
-                stringBuilder.append(",");
-            }
-        }
-        stringBuilder.append("],       \"gameOver\":false   }}");
+        StringBuilder stringBuilder = new StringBuilder("{   \"topic\": \"REPLICA\",  \"data\":[");
+        String collect = replicaObjects.stream().map(GameObject::toJson).collect(Collectors.joining(","));
+        replicaObjects.clear();
+        stringBuilder.append(collect);
+        stringBuilder.append("]}");
         return stringBuilder.toString();
     }
 }

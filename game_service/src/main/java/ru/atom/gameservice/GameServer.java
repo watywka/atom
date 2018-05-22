@@ -3,6 +3,7 @@ package ru.atom.gameservice;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,7 +27,9 @@ public class GameServer {
     }
 
     public GameSession getGameSessionByPlayer(String name) {
-        return null;
+        return currentGames.entrySet().stream()
+                .filter(entry -> entry.getValue().getPlayers().contains(name))
+                .map(Map.Entry::getValue).findFirst().orElse(null);
     }
 
 

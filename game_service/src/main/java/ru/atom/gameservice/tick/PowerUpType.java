@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Random;
 
 public enum PowerUpType {
-    BOMB_RADIUS,
-    VELOCITY,
-    BOMB_COUNT;
+    RANGE,
+    SPEED,
+    BOMB;
 
 
     private static final List<PowerUpType> VALUES =

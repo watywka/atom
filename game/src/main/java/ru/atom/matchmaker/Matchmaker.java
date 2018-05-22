@@ -39,14 +39,10 @@ public class Matchmaker implements Runnable{
     @Override
     public void run() {
         logger.info("Matchmaker started");
-        getNextGameId();
-
-
         List<Connection> players = new ArrayList<>(PLAYERS_PER_GAME);
         while (!Thread.currentThread().isInterrupted()) {
             if (players.size() == PLAYERS_PER_GAME) {
-                //TODO: "start" post request
-                getNextGameId();
+                startGame(currentGameId);
                 players.clear();
 
             }
@@ -54,10 +50,10 @@ public class Matchmaker implements Runnable{
                try {
                     Connection e = queue.poll(10_000, TimeUnit.SECONDS);
                     synchronized (e) {
+                        if (players.isEmpty()) getNextGameId();
                         if( currentGameId > 0){
                             e.setGameId(currentGameId);
                             logger.info("Player {} -> game {}", e.getName(), e.getGameId());
-
 
                         }else {
                             e.setAvailable(false);
@@ -86,8 +82,18 @@ public class Matchmaker implements Runnable{
             logger.error("Can't create new game");
             logger.error(e.getLocalizedMessage());
             currentGameId = -1;
-            //Thread.currentThread().interrupt();
         }
-
+    }
+    private void startGame(long gameId) {
+        logger.info("Request to stat game {}",gameId );
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder().add("gameId", String.valueOf(gameId)).build();
+        Request request = new Request.Builder().url("http://localhost:8090/game/start").post(requestBody).addHeader("Content-Type", "application/x-www-form-urlencoded").build();
+        try {
+            client.newCall(request).execute();
+        } catch (IOException e) {
+            logger.error("Can't start game");
+            logger.error(e.getLocalizedMessage());
+        }
     }
 }

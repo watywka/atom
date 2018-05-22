@@ -9,7 +9,7 @@ public class Bomb extends GameObject implements Tickable{
 
     public Bomb(Field field, Player p) {
         super(p.x, p.y, field);
-        this.radius = p.bombsRadius;
+        this.radius = p.getBombRadius();
         this.owner = p;
     }
 

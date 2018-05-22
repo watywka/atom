@@ -42,6 +42,7 @@ public class GameServiceController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity start(@RequestParam("gameId") long gameId) {
+        logger.info("Game {} started", gameId);
         new Thread(gameServer.getGameSessionByName(String.valueOf(gameId))).run();
         return ResponseEntity.ok().build();
     }
