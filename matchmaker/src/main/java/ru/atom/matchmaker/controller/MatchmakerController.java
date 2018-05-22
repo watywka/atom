@@ -77,7 +77,7 @@ public class MatchmakerController {
             return ResponseEntity.badRequest().body("smt is wrong in logout");
         }
 
-        return ResponseEntity.badRequest().body("0");
+        return ResponseEntity.ok("logout");
     }
 
     @CrossOrigin(origins = "*")
@@ -111,7 +111,6 @@ public class MatchmakerController {
         return ResponseEntity.ok("Create new player");
     }
 
-
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "findGame",
             method = RequestMethod.POST)
@@ -141,7 +140,9 @@ public class MatchmakerController {
 
 
         Connection playerConnection = new Connection(player.getLogin(), player.getRating());
+
         matchmaker.getQueue().offer(playerConnection);
+
         synchronized (playerConnection) {
             try {
                 playerConnection.wait(10_000);
@@ -150,12 +151,18 @@ public class MatchmakerController {
                 return ResponseEntity.badRequest().body("0");
             }
         }
-        if ( playerConnection.isAvailable()){
+        if ( playerConnection.isCreatingGame()){
+            try {
+                player.setIdSession(playerConnection.getGameId());
+                playerDao.update(player);
+            } catch (Exception ex) {
+                logger.error(ex.getLocalizedMessage());
+                return ResponseEntity.badRequest().body("smt is wrong in SetIdSession");
+            }
             return ResponseEntity.ok(String.valueOf(playerConnection.getGameId()));
         }
 
         return ResponseEntity.badRequest().body("0");
     }
-
 
 }

@@ -20,7 +20,7 @@ public class PlayerDaoImpl implements PlayerDao{
 
     private static final Logger logger = LoggerFactory.getLogger(MatchmakerController.class);
 
-    @Autowired
+    //@Autowired
     private SessionFactory sessionFactory;
 
 

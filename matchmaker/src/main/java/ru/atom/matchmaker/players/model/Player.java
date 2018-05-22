@@ -83,8 +83,8 @@ public class Player implements Serializable {
         return rating;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void changeRating(int rating) {
+        this.rating += rating;
     }
 
     public Player() {
