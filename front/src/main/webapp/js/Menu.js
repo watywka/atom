@@ -30,7 +30,7 @@ Menu.prototype.showWithText = function (text, color) {
 
 Menu.prototype.draw = function (text, color) {
     this.drawBackground();
-    this.drawStartButton();
+    //this.drawStartButton();
     if (text !== null) {
         this.drawText(text, color);
     }
