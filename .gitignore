@@ -2,6 +2,7 @@
 /*/
 !/game/
 !/game_service/
+!/front/
 
 .gradle/
 /gradle/
