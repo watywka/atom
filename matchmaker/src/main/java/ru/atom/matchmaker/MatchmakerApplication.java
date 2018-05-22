@@ -11,4 +11,5 @@ public class MatchmakerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MatchmakerApplication.class, args);
 	}
+
 }

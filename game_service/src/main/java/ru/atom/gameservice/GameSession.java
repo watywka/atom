@@ -55,7 +55,7 @@ public class GameSession implements Runnable {
                 e.printStackTrace();
             }
         }
-        field = new Field(10, 10, players);
+        field = new Field(16, 16, players);
         final int FPS = 60;
         final long FRAME_TIME = 1000 / FPS;
         while (!Thread.currentThread().isInterrupted()) {
@@ -68,7 +68,6 @@ public class GameSession implements Runnable {
                         field.plantBomb(field.getPlayerByName(message.getName()));
                         break;
                     case MOVE:
-                        //получаем плеера и ставим ему velx vely
                         Player p = field.getPlayerByName(message.getName());
                         if (p != null) {
                             Direction direction = ((MoveMessage) message).getDirection();
@@ -79,8 +78,6 @@ public class GameSession implements Runnable {
 
                 }
             }
-            // Проходит по всем тикаемым объектам
-            // Потом проверяет тех, кто умер и удаляет их с поля
             field.gameLogic(FRAME_TIME);
 
             long elapsed = System.currentTimeMillis() - started;

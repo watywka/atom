@@ -22,7 +22,7 @@ public class Field {
     private int idGenerator;
     private final int height; // Y
     private final int width;  // X
-    public static final int tile = 48;   // количество пикселей
+    public static final int tile = 32;   // количество пикселей
 
     private Set<GameObject> replicaObjects;
 
@@ -46,10 +46,10 @@ public class Field {
             }
 
         //Добавлю Игроков
-        int[] X = {0, 9, 0, 9};
-        int[] Y = {0, 0, 9, 9};
+        int[] X = {0, 15, 0, 15};
+        int[] Y = {0, 0, 15, 15};
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 1; i++) {
             Player player = new Player(X[i],Y[i],this, players.get(i));
             gameObjects[X[i]][Y[i]] = player;
             replicaObjects.add(player);
@@ -112,17 +112,37 @@ public class Field {
         return null;
     }
 
-    //взято с фронта
-    public static boolean checkCollision(int newX, int newY, GameObject collideObj) {
-        if(collideObj == null) return false;
-        int down = collideObj.x*tile + 20;
-        int up = down + tile - 30;
-        int left = collideObj.x*tile + 25;
-        int right = left + tile - 30;
-        return (down < collideObj.y*tile)
-                && (up > collideObj.y*tile + tile)
-                && (left < collideObj.x*tile + tile)
-                && (right > collideObj.x*tile);
+
+    public void updatePlayerPosition(Player player, int x, int y) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                GameObject gameObject = gameObjects[i][j];
+                if (gameObject instanceof Player) {
+                    if (((Player) gameObject).getName().equals(player.getName())) {
+                        gameObjects[i][j] = null;
+                        gameObjects[x][y] = gameObject;
+                        return;
+                    }
+                }
+            }
+        }
+
+    }
+
+    public static boolean checkCollision(int centerX, int centerY, GameObject collideObj) {
+        if (collideObj == null) return false;
+        int down1 = collideObj.y * tile;
+        int up1 = down1 + tile;
+        int left1 = collideObj.x*tile;
+        int right1 = left1 + tile;
+        int up2 = centerY + Field.tile / 2;
+        int down2 = centerY - Field.tile / 2 ;
+        int left2 = centerX - Field.tile / 2 ;
+        int right2 = centerX + Field.tile / 2 ;
+        return (down1 <= up2)
+                && (up1 >= down2)
+                && (left1 <= right2)
+                && (right1 >= left2);
     }
 
     public int getNextId() {
@@ -137,4 +157,5 @@ public class Field {
         stringBuilder.append("]}");
         return stringBuilder.toString();
     }
+
 }

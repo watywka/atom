@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class Matchmaker implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(Matchmaker.class);
-    private static final int PLAYERS_PER_GAME = 4;
+    private static final int PLAYERS_PER_GAME = 1;
     private long currentGameId = 1;
     private boolean newGame = true;
     private final int rating = 1500;
