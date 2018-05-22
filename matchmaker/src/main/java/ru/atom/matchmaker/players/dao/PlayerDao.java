@@ -11,8 +11,6 @@ public interface PlayerDao {
 
     void delete(Player player);
 
-    Player getById(long id);
-
     Player getByLogin(String login);
 
     List<Player> getPlayerList();

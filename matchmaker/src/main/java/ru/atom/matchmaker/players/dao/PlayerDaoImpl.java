@@ -2,67 +2,69 @@ package ru.atom.matchmaker.players.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import ru.atom.matchmaker.controller.MatchmakerController;
 import ru.atom.matchmaker.players.model.Player;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.List;
 
-@Service
 @Repository
 @Transactional
 public class PlayerDaoImpl implements PlayerDao{
 
     private static final Logger logger = LoggerFactory.getLogger(MatchmakerController.class);
 
-    //@Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    @PersistenceContext
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
-    private Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
 
     @Override
     public void save(Player player) {
-        getSession().save(player);
-        return;
+        entityManager.persist(player);
     }
 
     public void delete(Player player) {
-        getSession().delete(player);
-        return;
+        entityManager.remove(player);
     }
 
     @Override
     public void update(Player player) {
-        getSession().update(player);
-        return;
+        entityManager.merge(player);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<Player> getPlayerList() {
-        return getSession().createQuery("from Player").list();
+        return entityManager.createQuery("from Player", Player.class).getResultList();
     }
 
     @Override
     public Player getByLogin(String login) {
-        return (Player) getSession().load(Player.class, login);
-    }
-
-
-    @Override
-    public Player getById(long id) {
-        return (Player) getSession().load(Player.class, id);
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Player> criteria = builder.createQuery(Player.class);
+        Root<Player> from = criteria.from(Player.class);
+        criteria.select(from);
+        criteria.where(builder.equal(from.get("login"), login));
+        TypedQuery<Player> typed = entityManager.createQuery(criteria);
+        Player player;
+        try {
+            player = typed.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+        return player;
     }
 }

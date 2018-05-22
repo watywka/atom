@@ -32,7 +32,7 @@ public class MatchmakerController {
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> login(@RequestParam("Login") String login, @RequestParam("password") String password) {
-        logger.info("New connection: Login = {}", login);
+        logger.info("New connection: Login = {} beda", login);
 
         Player player = playerDao.getByLogin(login);
         if (player == null){
