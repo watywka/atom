@@ -10,6 +10,8 @@ import ru.atom.matchmaker.players.model.Player;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -20,13 +22,14 @@ public class PlayerDaoImpl implements PlayerDao{
 
     private static final Logger logger = LoggerFactory.getLogger(MatchmakerController.class);
 
+    private final SessionFactory sessionFactory;
+
+
     @Autowired
-    private SessionFactory sessionFactory;
-
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
+    public PlayerDaoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
 
     private Session getSession() {
         return sessionFactory.getCurrentSession();

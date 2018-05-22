@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.atom.matchmaker.Connection;
 import ru.atom.matchmaker.Matchmaker;
-import ru.atom.matchmaker.players.dao.PlayerDao;
-import ru.atom.matchmaker.players.model.Player;
 
 @Controller
 @RequestMapping("matchmaker")
@@ -19,14 +17,36 @@ public class MatchmakerController {
     private static final Logger logger = LoggerFactory.getLogger(MatchmakerController.class);
 
     private Matchmaker matchmaker;
-    private final PlayerDao playerDao;
 
     @Autowired
-    public MatchmakerController(Matchmaker matchmaker, PlayerDao playerDao) {
+    public MatchmakerController(Matchmaker matchmaker) {
         this.matchmaker = matchmaker;
-        this.playerDao = playerDao;
     }
 
+    @CrossOrigin("*")
+    @RequestMapping(path = "join",
+            method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Long> join(@RequestParam("name") String name) {
+        logger.info("New connection: name = {}", name);
+        Connection playerConnection = new Connection(name);
+        matchmaker.getQueue().offer(playerConnection);
+        synchronized (playerConnection) {
+            try {
+                playerConnection.wait(10_000);
+            } catch (InterruptedException e) {
+                logger.error(e.getLocalizedMessage());
+                return ResponseEntity.badRequest().body((long) 0);
+            }
+        }
+        if ( playerConnection.isAvailable()){
+            return ResponseEntity.ok(playerConnection.getGameId());
+        }
+
+        return ResponseEntity.badRequest().body((long) 0);
+    }
+
+/*
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "login",
             method = RequestMethod.POST)
@@ -89,5 +109,5 @@ public class MatchmakerController {
         }
         return ResponseEntity.ok("Create new player");
     }
-
+*/
 }
