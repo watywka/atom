@@ -22,12 +22,17 @@ public class Bomb extends GameObject implements Tickable{
                 GameObject fieldAt = field.getAt(i, y);
                 if (fieldAt instanceof Box || fieldAt instanceof Player) {
                     fieldAt.setAlive(false);
+                }else{
+                    field.createFire(i,y);
                 }
             }
             for (int j = Math.max(0,y-radius); j < Math.min(field.getHeight(), y + radius); j++) {
                 GameObject fieldAt = field.getAt(x, j);
                 if (fieldAt instanceof Box || fieldAt instanceof Player) {
                     fieldAt.setAlive(false);
+                }else {
+
+                    field.createFire(x,j);
                 }
             }
             // Мы  убили бомбу после последнего тика и дали плееру новую

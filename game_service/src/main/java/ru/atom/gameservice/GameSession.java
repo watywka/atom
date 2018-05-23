@@ -58,7 +58,9 @@ public class GameSession implements Runnable {
         field = new Field(16, 16, players);
         final int FPS = 60;
         final long FRAME_TIME = 1000 / FPS;
+        int i=0;
         while (!Thread.currentThread().isInterrupted()) {
+            i++;
             long started = System.currentTimeMillis();
 
             List<Message> messages = readInputQueue();
@@ -72,6 +74,9 @@ public class GameSession implements Runnable {
                         if (p != null) {
                             Direction direction = ((MoveMessage) message).getDirection();
                             p.changeVelocity(direction.getX(), direction.getY());
+                            if (i%600 == 0 ) {
+                                log.info("direction x - {}, y - {}", direction.getX(),direction.getY());
+                            }
                             p.setDirection(direction);
                         }
                         break;

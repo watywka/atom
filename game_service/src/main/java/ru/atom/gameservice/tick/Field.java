@@ -20,8 +20,8 @@ public class Field {
 
      */
     private int idGenerator;
-    private final int height; // Y
-    private final int width;  // X
+    public final int height; // Y
+    public final int width;  // X
     public static final int tile = 32;   // количество пикселей
 
     private Set<GameObject> replicaObjects;
@@ -114,6 +114,7 @@ public class Field {
 
 
     public void updatePlayerPosition(Player player, int x, int y) {
+
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 GameObject gameObject = gameObjects[i][j];
@@ -131,14 +132,15 @@ public class Field {
 
     public static boolean checkCollision(int centerX, int centerY, GameObject collideObj) {
         if (collideObj == null) return false;
+        int t  = 5;
         int down1 = collideObj.y * tile;
         int up1 = down1 + tile;
         int left1 = collideObj.x*tile;
         int right1 = left1 + tile;
-        int up2 = centerY + Field.tile / 2;
-        int down2 = centerY - Field.tile / 2 ;
-        int left2 = centerX - Field.tile / 2 ;
-        int right2 = centerX + Field.tile / 2 ;
+        int up2 = centerY + Field.tile / 2-t;
+        int down2 = centerY - Field.tile / 2 +t;
+        int left2 = centerX - Field.tile / 2 +t;
+        int right2 = centerX + Field.tile / 2 -t;
         return (down1 <= up2)
                 && (up1 >= down2)
                 && (left1 <= right2)
@@ -158,4 +160,8 @@ public class Field {
         return stringBuilder.toString();
     }
 
+    public void createFire(int x, int y) {
+        Fire f= new Fire(x,y,this);
+        gameObjects[x][y] = f;
+    }
 }

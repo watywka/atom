@@ -41,24 +41,24 @@ public class Player extends GameObject implements Tickable {
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
             switch (direction) {
                 case UP:
-                    x1 = pixelX - Field.tile/4;
-                    x2 = pixelX + Field.tile/4;
+                    x1 = pixelX - Field.tile/2;
+                    x2 = pixelX + Field.tile/2;
                     y1 = y2 = pixelY + Field.tile;
                     break;
                 case DOWN:
-                    x1 = pixelX - Field.tile/4;
-                    x2 = pixelX + Field.tile/4;
+                    x1 = pixelX - Field.tile/2;
+                    x2 = pixelX + Field.tile/2;
                     y1 = y2 = pixelY - Field.tile;
                     break;
                 case LEFT:
                     x1 = x2 = pixelX - Field.tile;
-                    y1 = pixelY + Field.tile/4;
-                    y2 = pixelY - Field.tile/4;
+                    y1 = pixelY + Field.tile/2;
+                    y2 = pixelY - Field.tile/2;
                     break;
                 case RIGHT:
                     x1 = x2 = pixelX + Field.tile;
-                    y1 = pixelY + Field.tile/4;
-                    y2 = pixelY - Field.tile/4;
+                    y1 = pixelY + Field.tile/2;
+                    y2 = pixelY - Field.tile/2;
                     break;
 
             }
@@ -75,12 +75,22 @@ public class Player extends GameObject implements Tickable {
                 if (col2 instanceof PowerUp) {
                     applyPowerUp((PowerUp) col2);
                 }
-                pixelX += velX;
-                pixelY += velY;
+
+                int tmpX =  pixelX+velX;
+                int tmpY = pixelY + velY;
+                if (tmpY<(field.height*Field.tile-3) && tmpX< (field.width*Field.tile-3) && tmpX>=3 && tmpY>=3) {
+                    pixelX += velX;
+                    pixelY += velY;
+                }
+            }
+            int tmpX =  (pixelX)/Field.tile;
+            int tmpY = (pixelY)/Field.tile;
+
+            if (tmpY<field.height && tmpX< field.width && tmpX>=0 && tmpY>=0){
+                x = (pixelX)/Field.tile;
+                y = (pixelY)/Field.tile;
             }
 
-            x = (pixelX)/Field.tile;
-            y = (pixelY)/Field.tile;
             field.updatePlayerPosition(this, x, y);
             velX = 0;
             velY = 0;
