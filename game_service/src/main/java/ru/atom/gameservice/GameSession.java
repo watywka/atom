@@ -55,7 +55,7 @@ public class GameSession implements Runnable {
                 e.printStackTrace();
             }
         }
-        field = new Field(16, 16, players);
+        field = new Field(27, 17, players);
         final int FPS = 60;
         final long FRAME_TIME = 1000 / FPS;
         //int i=0;

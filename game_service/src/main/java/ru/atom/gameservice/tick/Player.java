@@ -62,8 +62,18 @@ public class Player extends GameObject implements Tickable {
                     break;
 
             }
-            GameObject col1 = field.getAt(x1/Field.tile, y1/Field.tile);
-            GameObject col2 = field.getAt(x2/Field.tile, y2/Field.tile);
+            GameObject col1 = null;
+            GameObject col2 = null;
+
+            if (y1/Field.tile<field.width && x1/Field.tile< field.height && x1/Field.tile>=0 && y1/Field.tile>=0){
+
+                col1 = field.getAt(x1/Field.tile, y1/Field.tile);
+            }
+            if (y2/Field.tile<field.width && x2/Field.tile< field.height && x2/Field.tile>=0 && y2/Field.tile>=0){
+
+                col2 = field.getAt(x2/Field.tile, y2/Field.tile);
+            }
+            //GameObject col2 = field.getAt(x2/Field.tile, y2/Field.tile);
             boolean collide;
             collide= Field.checkCollision(pixelX + velX, pixelY + velY, col1)
                     || Field.checkCollision(pixelX + velX, pixelY + velY, col2);
@@ -86,7 +96,7 @@ public class Player extends GameObject implements Tickable {
             int tmpX =  (pixelX)/Field.tile;
             int tmpY = (pixelY)/Field.tile;
 
-            if (tmpY<field.height && tmpX< field.width && tmpX>=0 && tmpY>=0){
+            if (tmpY<field.width && tmpX< field.height && tmpX>=0 && tmpY>=0){
                 x = (pixelX)/Field.tile;
                 y = (pixelY)/Field.tile;
             }

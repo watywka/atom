@@ -41,14 +41,9 @@ public class Field {
         }
 
         //Добавлю Стены WALL
-        for (int i = 1; i < height; i += 2)
-            for (int j = 1; j < width; j+= 2) {
-                Wall wall = new Wall(i, j, this);
-                gameObjects[i][j] = new Wall(i, j, this);
-                replicaObjects.add(wall);
-            }
-
+        walls();
         //Добавлю Игроков
+        //boxes();
         int[] X = {0, 15, 0, 15};
         int[] Y = {0, 0, 15, 15};
 
@@ -57,6 +52,25 @@ public class Field {
             gameObjects[X[i]][Y[i]] = player;
             replicaObjects.add(player);
         }
+    }
+    private void boxes() {
+        for (int i = 1; i < height; i += 2)
+            for (int j = 1; j < width; j+= 2) {
+                Box box = new Box(i, j, this);
+                gameObjects[i][j] = box;
+                replicaObjects.add(box);
+            }
+
+    }
+
+    private void walls() {
+        for (int i = 1; i < height; i += 2)
+            for (int j = 1; j < width; j+= 2) {
+                Wall wall = new Wall(i, j, this);
+                gameObjects[i][j] = wall;
+                replicaObjects.add(wall);
+            }
+
     }
 
     public int getHeight() {
@@ -109,6 +123,7 @@ public class Field {
             }
             replicaObjects.addAll(bombs);
         }
+        //walls();
 
     }
 

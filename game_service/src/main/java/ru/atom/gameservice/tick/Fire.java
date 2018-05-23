@@ -26,6 +26,9 @@ public class Fire extends GameObject implements Tickable{
 
     @Override
     public String toJson() {
-        return "";
+        return String.format("{\"position\":{\"x\":%d,\"y\":%d},\"id\":%d,\"type\":\"Bomb\"}",
+                x * Field.tile,
+                y * Field.tile,
+                id);
     }
 }
