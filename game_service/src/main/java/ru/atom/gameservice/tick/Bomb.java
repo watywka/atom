@@ -18,7 +18,7 @@ public class Bomb extends GameObject implements Tickable{
         if (timeToLive > 0) {
             timeToLive-= elapsed;
         } else {
-            for (int i = Math.max(0,x-radius); i < Math.min(field.getWidth(), x + radius); i++) {
+            for (int i = Math.max(0,x-radius); i <= Math.min(field.getWidth(), x + radius); i++) {
                 GameObject fieldAt = field.getAt(i, y);
                 if (fieldAt instanceof Box || fieldAt instanceof Player) {
                     fieldAt.setAlive(false);
@@ -26,7 +26,7 @@ public class Bomb extends GameObject implements Tickable{
                     field.createFire(i,y);
                 }
             }
-            for (int j = Math.max(0,y-radius); j < Math.min(field.getHeight(), y + radius); j++) {
+            for (int j = Math.max(0,y-radius); j <= Math.min(field.getHeight(), y + radius); j++) {
                 GameObject fieldAt = field.getAt(x, j);
                 if (fieldAt instanceof Box || fieldAt instanceof Player) {
                     fieldAt.setAlive(false);

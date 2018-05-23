@@ -8,7 +8,7 @@ public class Box extends GameObject {
 
     @Override
     public String toJson() {
-        return String.format("{\"position\":{\"x\":%d,\"y\":%d},\"id\":%d,\"type\":\"Box\"}",
+        return String.format("{\"position\":{\"x\":%d,\"y\":%d},\"id\":%d,\"type\":\"Wood\"}",
                 x * Field.tile,
                 y * Field.tile,
                 id);

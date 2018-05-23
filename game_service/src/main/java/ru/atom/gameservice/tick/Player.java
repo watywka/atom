@@ -9,11 +9,10 @@ public class Player extends GameObject implements Tickable {
     private int velY;
     private int pixelX; // центр игрока
     private int pixelY; // центр игрока
-    private int bombsRadius = 1;
     private int bombsMax = 1;
     private int speed = 1;
     private int bombsPlanted = 0;
-    private int bombRadius;
+    private int bombRadius = 1;
     private Direction direction = Direction.IDLE;
 
     public Player(int x, int y, Field field, String name) {
@@ -88,7 +87,7 @@ public class Player extends GameObject implements Tickable {
 
                 int tmpX =  pixelX+velX;
                 int tmpY = pixelY + velY;
-                if (tmpY<(field.height*Field.tile-3) && tmpX< (field.width*Field.tile-3) && tmpX>=3 && tmpY>=3) {
+                if (tmpY<(field.width*Field.tile-3) && tmpX< (field.height*Field.tile-3) && tmpX>=3 && tmpY>=3) {
                     pixelX += velX;
                     pixelY += velY;
                 }
@@ -138,7 +137,7 @@ public class Player extends GameObject implements Tickable {
                     bombsMax++;
                     break;
                 case RANGE:
-                    bombsRadius++;
+                    bombRadius++;
             }
         }
     }
