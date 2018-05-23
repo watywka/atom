@@ -52,7 +52,7 @@ public class MatchmakerController {
             return ResponseEntity.badRequest().body("smt is wrong in login");
         }
 
-        return ResponseEntity.ok().body("0");
+        return ResponseEntity.ok().body("login successful");
     }
 
     @CrossOrigin(origins = "*")
@@ -60,7 +60,7 @@ public class MatchmakerController {
             method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> logout(@RequestParam("login") String login) {
-        logger.info("New connection: Login = {}", login);
+        logger.info("Exit: Login = {}", login);
 
         Player player = playerDao.getByLogin(login);
 
@@ -77,7 +77,7 @@ public class MatchmakerController {
             return ResponseEntity.badRequest().body("smt is wrong in logout");
         }
 
-        return ResponseEntity.ok("logout");
+        return ResponseEntity.ok("logout successful");
     }
 
     @CrossOrigin(origins = "*")
@@ -106,7 +106,7 @@ public class MatchmakerController {
             playerDao.save(newPlayer);
         } catch (Exception ex) {
             logger.error(ex.getLocalizedMessage());
-            return ResponseEntity.badRequest().body("smt is wrong");
+            return ResponseEntity.badRequest().body("smt is wrong in saving new player");
         }
         return ResponseEntity.ok("Create new player");
     }
@@ -126,7 +126,7 @@ public class MatchmakerController {
         }
 
         if (!player.isOnline()) {
-            return ResponseEntity.badRequest().body("fuckUp");
+            return ResponseEntity.badRequest().body("problem in join/ set online");
         }
 
         try {
@@ -135,7 +135,7 @@ public class MatchmakerController {
             playerDao.update(player);
         } catch (Exception ex) {
             logger.error(ex.getLocalizedMessage());
-            return ResponseEntity.badRequest().body("smt is wrong in logout");
+            return ResponseEntity.badRequest().body("smt is wrong in update in join");
         }
 
 
@@ -148,7 +148,7 @@ public class MatchmakerController {
                 playerConnection.wait(10_000);
             } catch (InterruptedException e) {
                 logger.error(e.getLocalizedMessage());
-                return ResponseEntity.badRequest().body("0");
+                return ResponseEntity.badRequest().body("find game dont works");
             }
         }
         if ( playerConnection.isCreatingGame()){
@@ -162,7 +162,7 @@ public class MatchmakerController {
             return ResponseEntity.ok(String.valueOf(playerConnection.getGameId()));
         }
 
-        return ResponseEntity.badRequest().body("0");
+        return ResponseEntity.badRequest().body("matchmaker don`t working");
     }
 
 }

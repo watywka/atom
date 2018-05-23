@@ -19,9 +19,9 @@ public class Matchmaker implements Runnable{
     private static final int PLAYERS_PER_GAME = 1;
     private long currentGameId = 1;
     private boolean newGame = true;
-    private final int rating = 1500;
-    private final int ratingChange = 5;
-    private final int ratingStep = 50;
+    private static final int rating = 1500;
+    private static final int ratingChange = 5;
+    private static final int ratingStep = 50;
 
     private BlockingQueue<Connection> queue;
 

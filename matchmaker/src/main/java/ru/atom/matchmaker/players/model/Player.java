@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class Player implements Serializable {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="course")
     private long id;
 
     @Column(name = "login", unique = true, nullable = false, length = 40)
