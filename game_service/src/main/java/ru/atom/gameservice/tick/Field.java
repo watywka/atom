@@ -4,9 +4,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.LoggerFactory;
 
 public class Field {
-
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Field.class);
     /*
 
     |-----------------> X
@@ -25,6 +26,7 @@ public class Field {
     public static final int tile = 32;   // количество пикселей
 
     private Set<GameObject> replicaObjects;
+    public Set<Bomb> bombs;
 
     private GameObject[][] gameObjects;
 
@@ -32,6 +34,7 @@ public class Field {
         this.height = height;
         this.width = width;
         replicaObjects = new HashSet<>();
+        bombs = new HashSet<>();
         gameObjects = new GameObject[height][];
         for (int i = 0; i < height; i++) {
             gameObjects[i] = new GameObject[width];
@@ -70,8 +73,11 @@ public class Field {
 
     public void plantBomb(Player player) {
         if(player.tryToPlantBomb()) {
-            gameObjects[player.x][player.y] = new Bomb(this, player);
-            replicaObjects.add(gameObjects[player.x][player.y]);
+//            replicaObjects.add(gameObjects[player.x][player.y]);
+//            gameObjects[player.x][player.y] = new Bomb(this, player);
+            Bomb b = new Bomb(this,player);
+            bombs.add(b);
+
         }
     }
 
@@ -96,6 +102,12 @@ public class Field {
                     if (gameObjects[i][j] != null) replicaObjects.add(gameObjects[i][j]);
                 }
             }
+        }
+        if( !bombs.isEmpty()) {
+            for (Bomb b : bombs) {
+                b.tick(elapsed);
+            }
+            replicaObjects.addAll(bombs);
         }
 
     }

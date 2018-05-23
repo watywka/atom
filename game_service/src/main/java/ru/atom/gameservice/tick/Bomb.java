@@ -37,6 +37,7 @@ public class Bomb extends GameObject implements Tickable{
             }
             // Мы  убили бомбу после последнего тика и дали плееру новую
             this.setAlive(false);
+            field.bombs.remove(this);
             owner.giveNewBomb();
 
         }
