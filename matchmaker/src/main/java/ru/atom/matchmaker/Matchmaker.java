@@ -41,8 +41,8 @@ public class Matchmaker implements Runnable{
     @Override
     public void run() {
         logger.info("Matchmaker started");
-        List<Connection> players = new ArrayList<>(PLAYERS_PER_GAME);
-        List<Connection> goToGame = new ArrayList<>();
+        List<Connection> players = new ArrayList<>();
+        List<Connection> goToGame = new ArrayList<>(PLAYERS_PER_GAME);
         while (!Thread.currentThread().isInterrupted()) {
             if (goToGame.size() == PLAYERS_PER_GAME) {
                 startGame(currentGameId);
